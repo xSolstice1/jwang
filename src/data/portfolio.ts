@@ -173,7 +173,7 @@ export const projects: Project[] = [
       "Python",
       "SQL",
       "Tableau",
-      "dbt",
+      "AWS Sagemaker",
       "Airflow",
     ],
     pipeline: [
@@ -194,12 +194,6 @@ export const projects: Project[] = [
         label: "Snowflake DWH",
         type: "storage",
         details: "Centralized warehouse with role-based access and governance",
-      },
-      {
-        id: "dbt",
-        label: "dbt Models",
-        type: "process",
-        details: "Data modeling layer with tests, docs, and lineage",
       },
       {
         id: "tableau",
