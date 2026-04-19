@@ -234,9 +234,9 @@ export const projects: Project[] = [
       "Canvas API",
     ],
     screenshots: [
-      "/screenshots/flapworld-1.png",
-      "/screenshots/flapworld-2.png",
-      "/screenshots/flapworld-3.png",
+      "/jwang/screenshots/flapworld-1.png",
+      "/jwang/screenshots/flapworld-2.png",
+      "/jwang/screenshots/flapworld-3.png",
     ],
     pipeline: [
       {
@@ -291,7 +291,7 @@ export const projects: Project[] = [
       "Enabled non-technical users to efficiently manipulate CourseLoop report data",
     ],
     techStack: ["C#", ".NET", "SQL"],
-    screenshots: ["/screenshots/curriculum.jpg"],
+    screenshots: ["/jwang/screenshots/curriculum.jpg"],
     pipeline: [
       {
         id: "input",
@@ -333,7 +333,7 @@ export const projects: Project[] = [
       "Deployed live on Vercel with persistent MongoDB storage",
     ],
     techStack: ["Go", "TypeScript", "React", "Chakra UI", "MongoDB"],
-    screenshots: ["/screenshots/lcdiary.png"],
+    screenshots: ["/jwang/screenshots/lcdiary.png"],
     pipeline: [
       {
         id: "frontend",
