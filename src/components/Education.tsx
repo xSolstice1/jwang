@@ -6,11 +6,11 @@ import { motion, AnimatePresence } from "framer-motion";
 const education = [
   {
     degree: "Bachelor's Degree in Computer Science & Business Information Systems",
-    detail: "Double Major",
+    detail: "Bachelor's Degree",
     school: "Murdoch University",
     location: "Singapore",
     year: "2024",
-    gpa: "3.28 / 4.0",
+    gpa: "",
     achievements: {
       "High Distinctions": [
         "Databases",
@@ -33,7 +33,7 @@ const education = [
   },
   {
     degree: "Diploma in Interactive & Digital Media",
-    detail: "",
+    detail: "Diploma",
     school: "Republic Polytechnic",
     location: "Singapore",
     year: "2019",
