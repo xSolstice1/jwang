@@ -9,7 +9,7 @@ const education = [
     detail: "Double Major",
     school: "Murdoch University",
     location: "Singapore",
-    year: "2023 — 2024",
+    year: "2024",
     gpa: "3.28 / 4.0",
     achievements: {
       "High Distinctions": [
@@ -36,7 +36,7 @@ const education = [
     detail: "",
     school: "Republic Polytechnic",
     location: "Singapore",
-    year: "2016 — 2019",
+    year: "2019",
     gpa: "",
     achievements: {
       "Module Prizes": [
