@@ -1,0 +1,154 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { projects } from "@/data/portfolio";
+import PipelineFlow from "./PipelineFlow";
+
+export default function Projects() {
+  const [activeProject, setActiveProject] = useState(projects[0].id);
+
+  return (
+    <section id="projects" className="py-12 sm:py-16 md:py-24 px-4">
+      <div className="max-w-5xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="flex items-center gap-3 mb-12">
+            <span className="terminal-text text-sm text-[var(--neon-blue)]">03.</span>
+            <h2 className="text-2xl font-bold text-white">Projects</h2>
+            <div className="flex-1 h-px bg-white/10" />
+          </div>
+
+          <div className="flex flex-wrap gap-2 mb-8">
+            {projects.map((project) => (
+              <button
+                key={project.id}
+                onClick={() => setActiveProject(project.id)}
+                className={`px-4 py-2 rounded-lg text-sm terminal-text transition-all ${
+                  activeProject === project.id
+                    ? "bg-[var(--neon-blue)]/10 border border-[var(--neon-blue)]/30 text-[var(--neon-blue)]"
+                    : "bg-white/5 border border-white/5 text-gray-500 hover:text-gray-300 hover:border-white/10"
+                }`}
+              >
+                {project.title}
+              </button>
+            ))}
+          </div>
+
+          <AnimatePresence mode="wait">
+            {projects
+              .filter((p) => p.id === activeProject)
+              .map((project) => (
+                <motion.div
+                  key={project.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="glass-card rounded-xl overflow-hidden"
+                >
+                  <div className="p-4 sm:p-6 md:p-8 border-b border-white/5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
+                      <h3 className="text-xl font-bold text-white">{project.title}</h3>
+                      <span className="terminal-text text-xs text-gray-500 mt-1 sm:mt-0">
+                        {project.company}
+                      </span>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+                          Problem
+                        </h4>
+                        <p className="text-sm text-gray-400 leading-relaxed">
+                          {project.problem}
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+                          Architecture
+                        </h4>
+                        <p className="text-sm text-gray-400 leading-relaxed">
+                          {project.architecture}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 sm:p-6 md:p-8 border-b border-white/5">
+                    <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-4">
+                      Pipeline Architecture
+                    </h4>
+                    <PipelineFlow nodes={project.pipeline} />
+                  </div>
+
+                  {project.screenshots && project.screenshots.length > 0 && (
+                    <div className="p-4 sm:p-6 md:p-8 border-b border-white/5">
+                      <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-4">
+                        Screenshots
+                      </h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                        {project.screenshots.map((src, i) => (
+                          <div
+                            key={i}
+                            className="relative aspect-video rounded-lg overflow-hidden border border-white/5 bg-white/[0.02]"
+                          >
+                            <Image
+                              src={src}
+                              alt={`${project.title} screenshot ${i + 1}`}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 640px) 50vw, 33vw"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="p-4 sm:p-6 md:p-8 grid md:grid-cols-2 gap-4 sm:gap-6">
+                    <div>
+                      <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
+                        Impact
+                      </h4>
+                      <ul className="space-y-2">
+                        {project.impact.map((item, i) => (
+                          <li
+                            key={i}
+                            className="flex items-start gap-2 text-sm text-gray-400"
+                          >
+                            <span className="text-[var(--neon-green)] mt-0.5 shrink-0">▸</span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
+                        Tech Stack
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {project.techStack.map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-2.5 py-1 text-xs terminal-text rounded bg-white/5 text-gray-400 border border-white/5"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+          </AnimatePresence>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
