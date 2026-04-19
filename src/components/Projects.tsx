@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { projects } from "@/data/portfolio";
@@ -8,6 +8,22 @@ import PipelineFlow from "./PipelineFlow";
 
 export default function Projects() {
   const [activeProject, setActiveProject] = useState(projects[0].id);
+  const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
+
+  const closeLightbox = useCallback(() => setLightbox(null), []);
+
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [lightbox, closeLightbox]);
 
   return (
     <section id="projects" className="py-12 sm:py-16 md:py-24 px-4">
@@ -94,18 +110,25 @@ export default function Projects() {
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                         {project.screenshots.map((src, i) => (
-                          <div
+                          <button
                             key={i}
-                            className="relative aspect-video rounded-lg overflow-hidden border border-white/5 bg-white/[0.02]"
+                            type="button"
+                            onClick={() => setLightbox({ src, alt: `${project.title} screenshot ${i + 1}` })}
+                            className="relative aspect-video rounded-lg overflow-hidden border border-white/5 bg-white/[0.02] cursor-zoom-in group"
                           >
                             <Image
                               src={src}
                               alt={`${project.title} screenshot ${i + 1}`}
                               fill
-                              className="object-cover"
+                              className="object-cover transition-transform duration-300 group-hover:scale-105"
                               sizes="(max-width: 640px) 50vw, 33vw"
                             />
-                          </div>
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                              <svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-80 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
+                              </svg>
+                            </div>
+                          </button>
                         ))}
                       </div>
                     </div>
@@ -149,6 +172,42 @@ export default function Projects() {
           </AnimatePresence>
         </motion.div>
       </div>
+      <AnimatePresence>
+        {lightbox && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 cursor-zoom-out"
+            onClick={closeLightbox}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="relative max-w-[90vw] max-h-[90vh] w-auto h-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={lightbox.src}
+                alt={lightbox.alt}
+                className="max-w-full max-h-[90vh] rounded-lg object-contain"
+              />
+              <button
+                type="button"
+                onClick={closeLightbox}
+                className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
