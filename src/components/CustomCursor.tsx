@@ -1,24 +1,31 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function CustomCursor() {
   const dot = useRef<HTMLDivElement>(null);
   const ring = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(false);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     if (window.matchMedia("(pointer: coarse)").matches) return;
-
-    document.documentElement.classList.add("has-custom-cursor");
+    if (!dot.current || !ring.current) return;
 
     let mouseX = -100;
     let mouseY = -100;
     let ringX = -100;
     let ringY = -100;
+    let rafId: number;
+    let moved = false;
 
     const onMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      if (!moved) {
+        moved = true;
+        setActive(true);
+      }
     };
 
     const onOver = (e: MouseEvent) => {
@@ -26,6 +33,13 @@ export default function CustomCursor() {
       const interactive = t.closest("a, button, [role='button'], input, textarea, select");
       dot.current?.classList.toggle("hovering", !!interactive);
       ring.current?.classList.toggle("hovering", !!interactive);
+    };
+
+    const onLeave = () => {
+      mouseX = -100;
+      mouseY = -100;
+      ringX = -100;
+      ringY = -100;
     };
 
     const loop = () => {
@@ -38,24 +52,45 @@ export default function CustomCursor() {
         const w = ring.current.classList.contains("hovering") ? 32 : 20;
         ring.current.style.transform = `translate(${ringX - w}px, ${ringY - w}px)`;
       }
-      requestAnimationFrame(loop);
+      rafId = requestAnimationFrame(loop);
     };
 
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseover", onOver);
-    requestAnimationFrame(loop);
+    document.addEventListener("mouseleave", onLeave);
+    rafId = requestAnimationFrame(loop);
 
     return () => {
-      document.documentElement.classList.remove("has-custom-cursor");
+      setActive(false);
+      cancelAnimationFrame(rafId);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseover", onOver);
+      document.removeEventListener("mouseleave", onLeave);
     };
   }, []);
 
+  // Only hide native cursor AFTER first mouse movement confirms JS is running
+  useEffect(() => {
+    if (active) {
+      document.documentElement.classList.add("has-custom-cursor");
+    }
+    return () => {
+      document.documentElement.classList.remove("has-custom-cursor");
+    };
+  }, [active]);
+
   return (
     <>
-      <div ref={dot} className="cursor-dot" />
-      <div ref={ring} className="cursor-ring" />
+      <div
+        ref={dot}
+        className="cursor-dot"
+        style={{ visibility: active ? "visible" : "hidden" }}
+      />
+      <div
+        ref={ring}
+        className="cursor-ring"
+        style={{ visibility: active ? "visible" : "hidden" }}
+      />
     </>
   );
 }
