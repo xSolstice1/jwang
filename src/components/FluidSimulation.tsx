@@ -36,8 +36,12 @@ export default function FluidSimulation() {
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio, 2);
-      canvas.width = canvas.offsetWidth * dpr;
-      canvas.height = canvas.offsetHeight * dpr;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px";
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
@@ -84,8 +88,8 @@ export default function FluidSimulation() {
       if (spears.length >= MAX_SPEARS || !canvas) return;
 
       const edge = Math.floor(Math.random() * 4);
-      const w = canvas.offsetWidth;
-      const h = canvas.offsetHeight;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
       let x: number, y: number;
 
       switch (edge) {
@@ -122,8 +126,8 @@ export default function FluidSimulation() {
     }
 
     const draw = () => {
-      const w = canvas.offsetWidth;
-      const h = canvas.offsetHeight;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
       ctx.clearRect(0, 0, w, h);
 
       // Compute mouse speed
@@ -281,8 +285,16 @@ export default function FluidSimulation() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 z-[45] w-full h-full"
-      style={{ pointerEvents: "none", opacity: 0.6 }}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        zIndex: 45,
+        pointerEvents: "none",
+        opacity: 0.6,
+      }}
     />
   );
 }
