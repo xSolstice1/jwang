@@ -281,7 +281,7 @@ export default function FluidSimulation() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 z-[2] w-full h-full"
+      className="fixed inset-0 z-[45] w-full h-full"
       style={{ pointerEvents: "none", opacity: 0.6 }}
     />
   );

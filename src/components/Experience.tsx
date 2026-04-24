@@ -43,7 +43,7 @@ export default function Experience() {
 
           {experiences.map((exp, i) => (
             <SectionReveal key={exp.company} delay={i * 0.1}>
-              <div className="relative pl-8 md:pl-12 pb-14 last:pb-0">
+              <div className="relative pl-8 md:pl-12 pb-28 last:pb-0">
                 <div
                   className="absolute left-0 md:left-3 top-2 w-[7px] h-[7px] rounded-full -translate-x-[3px] transition-all duration-500"
                   style={{
@@ -96,7 +96,7 @@ export default function Experience() {
                       }}
                       className="overflow-hidden"
                     >
-                      <div className="mt-5 mb-2 space-y-3">
+                      <div className="mt-5 space-y-3 pb-8">
                         <ul className="space-y-2.5">
                           {exp.highlights.map((h, j) => (
                             <motion.li
@@ -116,7 +116,7 @@ export default function Experience() {
                           ))}
                         </ul>
                         {exp.techStack.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-4 mb-2">
+                          <div className="flex flex-wrap gap-2 mt-6">
                             {exp.techStack.map((tech) => (
                               <span
                                 key={tech}
