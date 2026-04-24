@@ -2,13 +2,6 @@
 
 import { useEffect, useRef } from "react";
 
-interface Strand {
-  x: number;
-  y: number;
-  z: number;
-  opacity: number;
-}
-
 export default function HelixCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -26,150 +19,137 @@ export default function HelixCanvas() {
     let targetMouseY = 0.5;
     let time = 0;
 
-    const POINTS = 80;
-    const RADIUS = 120;
-    const VERTICAL_SPACING = 8;
-    const ROTATION_SPEED = 0.003;
-    const SCROLL_ROTATION_FACTOR = 0.002;
-    const RUNG_SKIP = 4;
+    const POINTS = 120;
+    const ROTATION_SPEED = 0.0015;
+    const SCROLL_FACTOR = 0.003;
+    const RUNG_SKIP = 5;
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio, 2);
       canvas.width = canvas.offsetWidth * dpr;
       canvas.height = canvas.offsetHeight * dpr;
-      ctx.scale(dpr, dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const onScroll = () => {
-      scrollY = window.scrollY;
-    };
-
+    const onScroll = () => { scrollY = window.scrollY; };
     const onMouse = (e: MouseEvent) => {
       targetMouseX = e.clientX / window.innerWidth;
       targetMouseY = e.clientY / window.innerHeight;
     };
 
-    const getStrandPoints = (
-      phase: number,
-      tiltX: number,
-      tiltY: number
-    ): Strand[] => {
-      const points: Strand[] = [];
-      const cx = canvas.offsetWidth / 2;
-      const cy = canvas.offsetHeight / 2;
-      const totalHeight = POINTS * VERTICAL_SPACING;
-
-      for (let i = 0; i < POINTS; i++) {
-        const t = i / POINTS;
-        const angle = t * Math.PI * 4 + phase;
-        const y = cy - totalHeight / 2 + i * VERTICAL_SPACING;
-
-        const cosA = Math.cos(angle);
-        const sinA = Math.sin(angle);
-
-        const x = cx + cosA * RADIUS + tiltX * (t - 0.5) * 60;
-        const z = sinA;
-
-        const depth = (z + 1) / 2;
-        const opacity = 0.15 + depth * 0.7;
-
-        points.push({
-          x: x + tiltY * (t - 0.5) * 30,
-          y,
-          z,
-          opacity,
-        });
-      }
-      return points;
-    };
-
     const draw = () => {
       time += ROTATION_SPEED;
-      mouseX += (targetMouseX - mouseX) * 0.04;
-      mouseY += (targetMouseY - mouseY) * 0.04;
+      mouseX += (targetMouseX - mouseX) * 0.03;
+      mouseY += (targetMouseY - mouseY) * 0.03;
 
       const w = canvas.offsetWidth;
       const h = canvas.offsetHeight;
       ctx.clearRect(0, 0, w, h);
 
-      const scrollRotation = scrollY * SCROLL_ROTATION_FACTOR;
-      const phase = time + scrollRotation;
-      const tiltX = (mouseX - 0.5) * 2;
-      const tiltY = (mouseY - 0.5) * 2;
+      const cx = w / 2;
+      const cy = h / 2;
+      const radius = Math.min(w, h) * 0.28;
+      const totalH = h * 0.85;
+      const phase = time + scrollY * SCROLL_FACTOR;
+      const tiltX = (mouseX - 0.5) * 1.8;
+      const tiltY = (mouseY - 0.5) * 1.2;
 
-      const strand1 = getStrandPoints(phase, tiltX, tiltY);
-      const strand2 = getStrandPoints(phase + Math.PI, tiltX, tiltY);
+      // Generate strand points
+      const getStrand = (phaseOffset: number) => {
+        const pts = [];
+        for (let i = 0; i < POINTS; i++) {
+          const t = i / (POINTS - 1);
+          const angle = t * Math.PI * 5 + phase + phaseOffset;
+          const yPos = cy - totalH / 2 + t * totalH;
+          const cosA = Math.cos(angle);
+          const sinA = Math.sin(angle);
+          // Breathing radius — pulses gently
+          const breathe = 1 + Math.sin(time * 0.5 + t * 3) * 0.06;
+          const r = radius * breathe;
+          const x = cx + cosA * r + tiltX * (t - 0.5) * r * 0.5;
+          const y = yPos + tiltY * sinA * 15;
+          const z = sinA;
+          pts.push({ x, y, z, t });
+        }
+        return pts;
+      };
 
-      // Rungs (connecting lines between strands)
+      const s1 = getStrand(0);
+      const s2 = getStrand(Math.PI);
+
+      // Draw rungs first (behind strands)
       for (let i = 0; i < POINTS; i += RUNG_SKIP) {
-        const p1 = strand1[i];
-        const p2 = strand2[i];
-        const avgZ = (p1.z + p2.z) / 2;
-        const rungOpacity = 0.06 + (avgZ + 1) / 2 * 0.12;
+        const a = s1[i], b = s2[i];
+        const avgZ = (a.z + b.z) / 2;
+        const depth = (avgZ + 1) / 2;
+        const alpha = 0.02 + depth * 0.06;
 
         ctx.beginPath();
-        ctx.moveTo(p1.x, p1.y);
-        ctx.lineTo(p2.x, p2.y);
-        ctx.strokeStyle = `rgba(100, 255, 218, ${rungOpacity})`;
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = `rgba(100, 255, 218, ${alpha})`;
         ctx.lineWidth = 0.5;
         ctx.stroke();
       }
 
-      // Sort all points by z for correct draw order
-      const allPoints = [
-        ...strand1.map((p, i) => ({ ...p, strand: 1, idx: i })),
-        ...strand2.map((p, i) => ({ ...p, strand: 2, idx: i })),
-      ].sort((a, b) => a.z - b.z);
-
-      // Draw strand curves with varying thickness
-      const drawStrand = (points: Strand[], color: string) => {
-        for (let i = 1; i < points.length; i++) {
-          const prev = points[i - 1];
-          const curr = points[i];
-          const depth = (curr.z + 1) / 2;
-          const lineWidth = 0.5 + depth * 1.5;
-          const alpha = curr.opacity * 0.6;
-
+      // Draw each strand as smooth curve with depth
+      const drawStrand = (pts: typeof s1, r: number, g: number, b: number) => {
+        // Back pass (behind)
+        for (let i = 1; i < pts.length; i++) {
+          const p = pts[i - 1], c = pts[i];
+          const depth = (c.z + 1) / 2;
+          if (depth > 0.5) continue;
+          const alpha = 0.05 + depth * 0.15;
+          const lw = 0.3 + depth * 0.8;
           ctx.beginPath();
-          ctx.moveTo(prev.x, prev.y);
-          ctx.lineTo(curr.x, curr.y);
-          ctx.strokeStyle = color.replace("ALPHA", String(alpha));
-          ctx.lineWidth = lineWidth;
+          ctx.moveTo(p.x, p.y); ctx.lineTo(c.x, c.y);
+          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+          ctx.lineWidth = lw;
+          ctx.stroke();
+        }
+        // Front pass (in front)
+        for (let i = 1; i < pts.length; i++) {
+          const p = pts[i - 1], c = pts[i];
+          const depth = (c.z + 1) / 2;
+          if (depth <= 0.5) continue;
+          const alpha = 0.08 + depth * 0.3;
+          const lw = 0.5 + depth * 1.5;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y); ctx.lineTo(c.x, c.y);
+          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+          ctx.lineWidth = lw;
           ctx.stroke();
         }
       };
 
-      drawStrand(strand1, "rgba(100, 255, 218, ALPHA)");
-      drawStrand(strand2, "rgba(199, 146, 234, ALPHA)");
+      drawStrand(s1, 100, 255, 218);
+      drawStrand(s2, 199, 146, 234);
 
-      // Draw nodes at intersections
-      for (const point of allPoints) {
-        if (point.idx % RUNG_SKIP !== 0) continue;
-        const depth = (point.z + 1) / 2;
-        const radius = 1 + depth * 2.5;
-        const alpha = 0.2 + depth * 0.6;
+      // Glow nodes at rung intersections
+      const allPts = [
+        ...s1.filter((_, i) => i % RUNG_SKIP === 0).map(p => ({ ...p, strand: 1 })),
+        ...s2.filter((_, i) => i % RUNG_SKIP === 0).map(p => ({ ...p, strand: 2 })),
+      ].sort((a, b) => a.z - b.z);
 
-        const color =
-          point.strand === 1
-            ? `rgba(100, 255, 218, ${alpha})`
-            : `rgba(199, 146, 234, ${alpha})`;
+      for (const p of allPts) {
+        const depth = (p.z + 1) / 2;
+        if (depth < 0.4) continue;
+        const r = 0.8 + depth * 2;
+        const alpha = (depth - 0.4) * 0.5;
+        const [cr, cg, cb] = p.strand === 1 ? [100, 255, 218] : [199, 146, 234];
 
+        // Soft glow
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 4);
+        grad.addColorStop(0, `rgba(${cr}, ${cg}, ${cb}, ${alpha * 0.4})`);
+        grad.addColorStop(1, `rgba(${cr}, ${cg}, ${cb}, 0)`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(p.x - r * 4, p.y - r * 4, r * 8, r * 8);
+
+        // Core dot
         ctx.beginPath();
-        ctx.arc(point.x, point.y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = color;
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${cr}, ${cg}, ${cb}, ${alpha})`;
         ctx.fill();
-
-        // Glow on front-facing nodes
-        if (depth > 0.7) {
-          const glowColor =
-            point.strand === 1
-              ? `rgba(100, 255, 218, ${alpha * 0.2})`
-              : `rgba(199, 146, 234, ${alpha * 0.2})`;
-          ctx.beginPath();
-          ctx.arc(point.x, point.y, radius * 3, 0, Math.PI * 2);
-          ctx.fillStyle = glowColor;
-          ctx.fill();
-        }
       }
 
       animId = requestAnimationFrame(draw);
@@ -194,7 +174,7 @@ export default function HelixCanvas() {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{ opacity: 0.7 }}
+      style={{ opacity: 0.5 }}
     />
   );
 }
