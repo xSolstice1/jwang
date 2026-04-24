@@ -69,7 +69,6 @@ export default function CustomCursor() {
     };
   }, []);
 
-  // Only hide native cursor AFTER first mouse movement confirms JS is running
   useEffect(() => {
     if (active) {
       document.documentElement.classList.add("has-custom-cursor");
@@ -91,6 +90,9 @@ export default function CustomCursor() {
         className="cursor-ring"
         style={{ visibility: active ? "visible" : "hidden" }}
       />
+      {active && (
+        <style>{`html.has-custom-cursor, html.has-custom-cursor * { cursor: none !important; }`}</style>
+      )}
     </>
   );
 }

@@ -42,14 +42,18 @@ export default function FluidSimulation() {
     };
 
     let mouseActive = true;
+    const EDGE_MARGIN = 40;
 
     const onMouse = (e: MouseEvent) => {
       prevMouseX = mouseX;
       prevMouseY = mouseY;
       mouseX = e.clientX;
       mouseY = e.clientY;
-      // Dead zone: ignore right 20px (scrollbar) and bottom 20px
-      mouseActive = e.clientX < window.innerWidth - 20 && e.clientY < window.innerHeight - 20;
+      mouseActive =
+        e.clientX > EDGE_MARGIN &&
+        e.clientX < window.innerWidth - EDGE_MARGIN &&
+        e.clientY > EDGE_MARGIN &&
+        e.clientY < window.innerHeight - EDGE_MARGIN;
     };
 
     function spawnBurst(count: number) {
@@ -164,9 +168,11 @@ export default function FluidSimulation() {
         }
 
         if (s.phase === "home") {
-          // Only home toward cursor when it's in active area
-          const targetX = mouseActive ? mouseX : w / 2;
-          const targetY = mouseActive ? mouseY : h / 2;
+          const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
+          const safeX = clamp(mouseX, EDGE_MARGIN * 2, w - EDGE_MARGIN * 2);
+          const safeY = clamp(mouseY, EDGE_MARGIN * 2, h - EDGE_MARGIN * 2);
+          const targetX = mouseActive ? safeX : w / 2;
+          const targetY = mouseActive ? safeY : h / 2;
           const dx = targetX - s.x;
           const dy = targetY - s.y;
           const dist = Math.sqrt(dx * dx + dy * dy);

@@ -26,11 +26,6 @@
   scrollbar-color: rgba(100, 255, 218, 0.15) transparent;
 }
 
-.has-custom-cursor,
-.has-custom-cursor * {
-  cursor: none !important;
-}
-
 @media (pointer: coarse) {
   .has-custom-cursor,
   .has-custom-cursor * {

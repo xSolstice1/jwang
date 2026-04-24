@@ -96,7 +96,7 @@ export default function Experience() {
                       }}
                       className="overflow-hidden"
                     >
-                      <div className="mt-5 space-y-3">
+                      <div className="mt-5 mb-2 space-y-3">
                         <ul className="space-y-2.5">
                           {exp.highlights.map((h, j) => (
                             <motion.li
@@ -116,7 +116,7 @@ export default function Experience() {
                           ))}
                         </ul>
                         {exp.techStack.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-4">
+                          <div className="flex flex-wrap gap-2 mt-4 mb-2">
                             {exp.techStack.map((tech) => (
                               <span
                                 key={tech}
