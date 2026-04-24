@@ -9,9 +9,9 @@ interface Spear {
   vy: number;
   life: number;
   maxLife: number;
-  phase: "out" | "home";
+  phase: "out" | "home" | "free";
   length: number;
-  hue: number; // 0 = teal, 1 = purple
+  hue: number;
   width: number;
   speed: number;
 }
@@ -21,9 +21,7 @@ export default function LightSpears() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && !window.matchMedia("(pointer: coarse)").matches) {
-      setMounted(true);
-    }
+    if (typeof window !== "undefined") setMounted(true);
   }, []);
 
   useEffect(() => {
@@ -33,14 +31,19 @@ export default function LightSpears() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    const MAX_SPEARS = isTouch ? 40 : 60;
+
     let animId: number;
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
     let prevMouseX = mouseX;
     let prevMouseY = mouseY;
     let mouseSpeed = 0;
+    let mouseActive = true;
+    let touching = false;
+    const EDGE_MARGIN = 40;
     const spears: Spear[] = [];
-    const MAX_SPEARS = 60;
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio, 2);
@@ -53,9 +56,35 @@ export default function LightSpears() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    let mouseActive = true;
-    const EDGE_MARGIN = 40;
+    function spawnAt(x: number, y: number, count: number, mode: "burst" | "trail") {
+      for (let i = 0; i < count; i++) {
+        if (spears.length >= MAX_SPEARS) break;
 
+        const angle = Math.random() * Math.PI * 2;
+        const spd = mode === "burst"
+          ? 2.5 + Math.random() * 4
+          : 1.5 + Math.random() * 3;
+        const life = mode === "burst"
+          ? 50 + Math.random() * 40
+          : 35 + Math.random() * 30;
+
+        spears.push({
+          x,
+          y,
+          vx: Math.cos(angle) * spd,
+          vy: Math.sin(angle) * spd,
+          life,
+          maxLife: life,
+          phase: isTouch ? "free" : "out",
+          length: 12 + Math.random() * 20,
+          hue: Math.random() > 0.4 ? 0 : 1,
+          width: 0.4 + Math.random() * 1,
+          speed: spd,
+        });
+      }
+    }
+
+    // --- Desktop: mouse ---
     const onMouse = (e: MouseEvent) => {
       prevMouseX = mouseX;
       prevMouseY = mouseY;
@@ -68,32 +97,38 @@ export default function LightSpears() {
         e.clientY < window.innerHeight - EDGE_MARGIN;
     };
 
-    function spawnBurst(count: number) {
-      for (let i = 0; i < count; i++) {
-        if (spears.length >= MAX_SPEARS) break;
+    // --- Mobile: touch ---
+    const onTouchStart = (e: TouchEvent) => {
+      touching = true;
+      const t = e.touches[0];
+      mouseX = t.clientX;
+      mouseY = t.clientY;
+      prevMouseX = mouseX;
+      prevMouseY = mouseY;
+      spawnAt(mouseX, mouseY, 6 + Math.floor(Math.random() * 4), "burst");
+    };
 
-        const angle = Math.random() * Math.PI * 2;
-        const speed = 2 + Math.random() * 4;
-        const life = 80 + Math.random() * 60;
+    const onTouchMove = (e: TouchEvent) => {
+      const t = e.touches[0];
+      prevMouseX = mouseX;
+      prevMouseY = mouseY;
+      mouseX = t.clientX;
+      mouseY = t.clientY;
 
-        spears.push({
-          x: mouseX,
-          y: mouseY,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          life,
-          maxLife: life,
-          phase: "out",
-          length: 15 + Math.random() * 25,
-          hue: Math.random() > 0.4 ? 0 : 1,
-          width: 0.5 + Math.random() * 1.2,
-          speed,
-        });
+      const dx = mouseX - prevMouseX;
+      const dy = mouseY - prevMouseY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > 8) {
+        spawnAt(mouseX, mouseY, 1 + Math.floor(dist / 15), "trail");
       }
-    }
+    };
+
+    const onTouchEnd = () => {
+      touching = false;
+    };
 
     function spawnAmbient() {
-      if (spears.length >= MAX_SPEARS || !canvas) return;
+      if (spears.length >= MAX_SPEARS) return;
 
       const edge = Math.floor(Math.random() * 4);
       const w = window.innerWidth;
@@ -107,16 +142,14 @@ export default function LightSpears() {
         default: x = -20; y = Math.random() * h; break;
       }
 
-      const dx = mouseX - x;
-      const dy = mouseY - y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+      const targetX = isTouch ? w / 2 + (Math.random() - 0.5) * w * 0.6 : mouseX;
+      const targetY = isTouch ? h / 2 + (Math.random() - 0.5) * h * 0.6 : mouseY;
+      const dx = targetX - x;
+      const dy = targetY - y;
       const speed = 1.5 + Math.random() * 2;
       const life = 120 + Math.random() * 80;
-
-      // Aim roughly toward cursor with some spread
       const baseAngle = Math.atan2(dy, dx);
-      const spread = (Math.random() - 0.5) * 0.8;
-      const angle = baseAngle + spread;
+      const angle = baseAngle + (Math.random() - 0.5) * 0.8;
 
       spears.push({
         x,
@@ -125,7 +158,7 @@ export default function LightSpears() {
         vy: Math.sin(angle) * speed,
         life,
         maxLife: life,
-        phase: "home",
+        phase: isTouch ? "free" : "home",
         length: 20 + Math.random() * 30,
         hue: Math.random() > 0.5 ? 0 : 1,
         width: 0.3 + Math.random() * 0.8,
@@ -138,26 +171,27 @@ export default function LightSpears() {
       const h = window.innerHeight;
       ctx.clearRect(0, 0, w, h);
 
-      // Compute mouse speed
-      const mdx = mouseX - prevMouseX;
-      const mdy = mouseY - prevMouseY;
-      const currentSpeed = Math.sqrt(mdx * mdx + mdy * mdy);
-      mouseSpeed += (currentSpeed - mouseSpeed) * 0.15;
+      // Mouse speed (desktop)
+      if (!isTouch) {
+        const mdx = mouseX - prevMouseX;
+        const mdy = mouseY - prevMouseY;
+        const currentSpeed = Math.sqrt(mdx * mdx + mdy * mdy);
+        mouseSpeed += (currentSpeed - mouseSpeed) * 0.15;
 
-      if (mouseActive) {
-        // Spawn burst spears on fast mouse movement
-        if (mouseSpeed > 3) {
+        if (mouseActive && mouseSpeed > 3) {
           const count = Math.min(Math.floor(mouseSpeed / 4), 4);
-          spawnBurst(count);
+          spawnAt(mouseX, mouseY, count, "burst");
         }
+      }
 
-        // Ambient inbound spears
-        if (Math.random() < 0.08) {
+      // Ambient spears — both desktop and mobile
+      const ambientRate = isTouch ? 0.04 : 0.08;
+      if (Math.random() < ambientRate) {
+        if (!isTouch || !touching) {
           spawnAmbient();
         }
       }
 
-      // Update and render spears
       for (let i = spears.length - 1; i >= 0; i--) {
         const s = spears[i];
         s.life--;
@@ -170,13 +204,9 @@ export default function LightSpears() {
         const lifeRatio = s.life / s.maxLife;
 
         if (s.phase === "out") {
-          // Outbound: decelerate, then switch to homing
           s.vx *= 0.97;
           s.vy *= 0.97;
-
-          if (lifeRatio < 0.5) {
-            s.phase = "home";
-          }
+          if (lifeRatio < 0.5) s.phase = "home";
         }
 
         if (s.phase === "home") {
@@ -195,7 +225,6 @@ export default function LightSpears() {
             s.vy += (dy / dist) * steer;
           }
 
-          // Speed limit
           const vel = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
           const maxV = s.speed * 1.5;
           if (vel > maxV) {
@@ -203,22 +232,24 @@ export default function LightSpears() {
             s.vy = (s.vy / vel) * maxV;
           }
 
-          // Kill if very close to cursor
-          if (dist < 15) {
-            s.life = Math.min(s.life, 8);
-          }
+          if (dist < 15) s.life = Math.min(s.life, 8);
+        }
+
+        if (s.phase === "free") {
+          // Mobile: just decelerate and drift, no homing
+          s.vx *= 0.98;
+          s.vy *= 0.98;
         }
 
         s.x += s.vx;
         s.y += s.vy;
 
-        // Off screen kill
         if (s.x < -50 || s.x > w + 50 || s.y < -50 || s.y > h + 50) {
           spears.splice(i, 1);
           continue;
         }
 
-        // Render spear as tapered line with glow
+        // Render
         const vel = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
         if (vel < 0.01) continue;
 
@@ -227,17 +258,15 @@ export default function LightSpears() {
         const tailX = s.x - nx * s.length * lifeRatio;
         const tailY = s.y - ny * s.length * lifeRatio;
 
-        // Fade: bright at birth and near death gives pulse feel
         const fadeIn = Math.min(1, (s.maxLife - s.life) / 10);
         const fadeOut = Math.min(1, s.life / 15);
         const alpha = fadeIn * fadeOut * 0.7;
 
-        // Color
         const [r, g, b] = s.hue === 0
-          ? [100, 255, 218]  // teal
-          : [199, 146, 234]; // purple
+          ? [100, 255, 218]
+          : [199, 146, 234];
 
-        // Glow layer
+        // Glow
         const grad = ctx.createLinearGradient(tailX, tailY, s.x, s.y);
         grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
         grad.addColorStop(0.6, `rgba(${r}, ${g}, ${b}, ${alpha * 0.3})`);
@@ -251,7 +280,7 @@ export default function LightSpears() {
         ctx.lineCap = "round";
         ctx.stroke();
 
-        // Core bright line
+        // Core
         const coreGrad = ctx.createLinearGradient(tailX, tailY, s.x, s.y);
         coreGrad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
         coreGrad.addColorStop(0.5, `rgba(255, 255, 255, ${alpha * 0.4})`);
@@ -265,7 +294,7 @@ export default function LightSpears() {
         ctx.lineCap = "round";
         ctx.stroke();
 
-        // Head dot
+        // Head
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.width * 1.2, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
@@ -281,11 +310,21 @@ export default function LightSpears() {
     draw();
 
     window.addEventListener("resize", resize);
-    window.addEventListener("mousemove", onMouse);
+
+    if (isTouch) {
+      window.addEventListener("touchstart", onTouchStart, { passive: true });
+      window.addEventListener("touchmove", onTouchMove, { passive: true });
+      window.addEventListener("touchend", onTouchEnd);
+    } else {
+      window.addEventListener("mousemove", onMouse);
+    }
 
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("mousemove", onMouse);
     };
   }, [mounted]);
