@@ -12,75 +12,56 @@ export default function AnimatedBackground() {
     if (!ctx) return;
 
     let animationId: number;
-    let particles: { x: number; y: number; vx: number; vy: number; size: number; opacity: number }[] = [];
+    let mouseX = canvas.width / 2;
+    let mouseY = canvas.height / 2;
 
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
 
-    const createParticles = () => {
-      const count = Math.min(Math.floor(window.innerWidth / 20), 60);
-      particles = Array.from({ length: count }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 1.5 + 0.5,
-        opacity: Math.random() * 0.5 + 0.1,
-      }));
+    const onMouse = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
     };
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      for (const p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
+      const grd = ctx.createRadialGradient(
+        mouseX, mouseY, 0,
+        mouseX, mouseY, canvas.width * 0.6
+      );
+      grd.addColorStop(0, "rgba(100, 255, 218, 0.03)");
+      grd.addColorStop(0.5, "rgba(199, 146, 234, 0.015)");
+      grd.addColorStop(1, "transparent");
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 212, 255, ${p.opacity})`;
-        ctx.fill();
-      }
-
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 150) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(0, 212, 255, ${0.05 * (1 - dist / 150)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
+      const t = Date.now() * 0.0003;
+      for (let i = 0; i < 3; i++) {
+        const x = canvas.width * (0.3 + i * 0.2) + Math.sin(t + i * 2) * 100;
+        const y = canvas.height * (0.3 + i * 0.15) + Math.cos(t + i * 1.5) * 80;
+        const grd2 = ctx.createRadialGradient(x, y, 0, x, y, 300);
+        grd2.addColorStop(0, `rgba(100, 255, 218, ${0.015 - i * 0.003})`);
+        grd2.addColorStop(1, "transparent");
+        ctx.fillStyle = grd2;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
 
       animationId = requestAnimationFrame(draw);
     };
 
     resize();
-    createParticles();
     draw();
 
-    window.addEventListener("resize", () => {
-      resize();
-      createParticles();
-    });
+    window.addEventListener("resize", resize);
+    window.addEventListener("mousemove", onMouse);
 
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", onMouse);
     };
   }, []);
 
@@ -88,7 +69,6 @@ export default function AnimatedBackground() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.6 }}
     />
   );
 }

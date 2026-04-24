@@ -5,10 +5,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { projects } from "@/data/portfolio";
 import PipelineFlow from "./PipelineFlow";
+import SectionReveal from "./SectionReveal";
+import ScrollParallax from "./ScrollParallax";
+import StrokeText from "./StrokeText";
 
 export default function Projects() {
   const [activeProject, setActiveProject] = useState(projects[0].id);
-  const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
+  const [lightbox, setLightbox] = useState<{
+    src: string;
+    alt: string;
+  } | null>(null);
 
   const closeLightbox = useCallback(() => setLightbox(null), []);
 
@@ -25,168 +31,247 @@ export default function Projects() {
     };
   }, [lightbox, closeLightbox]);
 
-  return (
-    <section id="projects" className="py-12 sm:py-16 md:py-24 px-4">
-      <div className="max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center gap-3 mb-12">
-            <span className="terminal-text text-sm text-[var(--neon-blue)]">03.</span>
-            <h2 className="text-2xl font-bold text-white">Projects</h2>
-            <div className="flex-1 h-px bg-white/10" />
-          </div>
+  const ease = [0.22, 1, 0.36, 1] as const;
 
-          <div className="flex flex-wrap gap-2 mb-8">
+  return (
+    <section id="projects" className="py-24 sm:py-32 px-6">
+      <div className="max-w-6xl mx-auto">
+        <SectionReveal>
+          <div className="flex items-center gap-4 mb-16">
+            <ScrollParallax speed={-0.15}>
+              <span
+                className="font-mono text-xs tracking-widest"
+                style={{ color: "var(--accent)" }}
+              >
+                03
+              </span>
+            </ScrollParallax>
+            <StrokeText text="Projects" className="text-2xl sm:text-3xl font-bold" />
+            <div
+              className="flex-1 h-px"
+              style={{ background: "var(--border-color)" }}
+            />
+          </div>
+        </SectionReveal>
+
+        <SectionReveal delay={0.1}>
+          <div className="flex flex-wrap gap-2 mb-10">
             {projects.map((project) => (
               <button
                 key={project.id}
                 onClick={() => setActiveProject(project.id)}
-                className={`px-4 py-2 rounded-lg text-sm terminal-text transition-all ${
-                  activeProject === project.id
-                    ? "bg-[var(--neon-blue)]/10 border border-[var(--neon-blue)]/30 text-[var(--neon-blue)]"
-                    : "bg-white/5 border border-white/5 text-gray-500 hover:text-gray-300 hover:border-white/10"
-                }`}
+                className="px-5 py-2.5 text-xs font-mono uppercase tracking-wider transition-all duration-300"
+                style={{
+                  color:
+                    activeProject === project.id
+                      ? "var(--bg)"
+                      : "var(--text-muted)",
+                  background:
+                    activeProject === project.id
+                      ? "var(--accent)"
+                      : "var(--surface)",
+                  border: `1px solid ${
+                    activeProject === project.id
+                      ? "var(--accent)"
+                      : "var(--border-color)"
+                  }`,
+                }}
               >
                 {project.title}
               </button>
             ))}
           </div>
+        </SectionReveal>
 
-          <AnimatePresence mode="wait">
-            {projects
-              .filter((p) => p.id === activeProject)
-              .map((project) => (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="glass-card rounded-xl overflow-hidden"
-                >
-                  <div className="p-4 sm:p-6 md:p-8 border-b border-white/5">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
-                      <h3 className="text-xl font-bold text-white">{project.title}</h3>
-                      <span className="terminal-text text-xs text-gray-500 mt-1 sm:mt-0">
-                        {project.company}
-                      </span>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div>
-                        <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
-                          Problem
-                        </h4>
-                        <p className="text-sm text-gray-400 leading-relaxed">
-                          {project.problem}
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
-                          Architecture
-                        </h4>
-                        <p className="text-sm text-gray-400 leading-relaxed">
-                          {project.architecture}
-                        </p>
-                      </div>
-                    </div>
+        <AnimatePresence mode="wait">
+          {projects
+            .filter((p) => p.id === activeProject)
+            .map((project) => (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, ease }}
+                className="card rounded-xl overflow-hidden"
+              >
+                <div className="p-6 sm:p-8 md:p-10" style={{ borderBottom: "1px solid var(--border-color)" }}>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+                    <h3 className="text-xl sm:text-2xl font-bold text-white">
+                      {project.title}
+                    </h3>
+                    <span
+                      className="font-mono text-[11px] uppercase tracking-widest mt-1 sm:mt-0"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      {project.company}
+                    </span>
                   </div>
 
-                  <div className="p-4 sm:p-6 md:p-8 border-b border-white/5">
-                    <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-4">
-                      Pipeline Architecture
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div>
+                      <h4
+                        className="text-[10px] font-medium uppercase tracking-[0.2em] mb-3"
+                        style={{ color: "var(--text-muted)" }}
+                      >
+                        Problem
+                      </h4>
+                      <p
+                        className="text-sm leading-relaxed"
+                        style={{ color: "var(--text-secondary)" }}
+                      >
+                        {project.problem}
+                      </p>
+                    </div>
+                    <div>
+                      <h4
+                        className="text-[10px] font-medium uppercase tracking-[0.2em] mb-3"
+                        style={{ color: "var(--text-muted)" }}
+                      >
+                        Architecture
+                      </h4>
+                      <p
+                        className="text-sm leading-relaxed"
+                        style={{ color: "var(--text-secondary)" }}
+                      >
+                        {project.architecture}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6 sm:p-8 md:p-10" style={{ borderBottom: "1px solid var(--border-color)" }}>
+                  <h4
+                    className="text-[10px] font-medium uppercase tracking-[0.2em] mb-6"
+                    style={{ color: "var(--text-muted)" }}
+                  >
+                    Pipeline Architecture
+                  </h4>
+                  <PipelineFlow nodes={project.pipeline} />
+                </div>
+
+                {project.screenshots && project.screenshots.length > 0 && (
+                  <div className="p-6 sm:p-8 md:p-10" style={{ borderBottom: "1px solid var(--border-color)" }}>
+                    <h4
+                      className="text-[10px] font-medium uppercase tracking-[0.2em] mb-6"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      Screenshots
                     </h4>
-                    <PipelineFlow nodes={project.pipeline} />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      {project.screenshots.map((src, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() =>
+                            setLightbox({
+                              src,
+                              alt: `${project.title} screenshot ${i + 1}`,
+                            })
+                          }
+                          className="relative aspect-video rounded-lg overflow-hidden group"
+                          style={{
+                            border: "1px solid var(--border-color)",
+                            background: "var(--surface)",
+                          }}
+                        >
+                          <Image
+                            src={src}
+                            alt={`${project.title} screenshot ${i + 1}`}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            sizes="(max-width: 640px) 50vw, 33vw"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
+                            <svg
+                              className="w-8 h-8 text-white opacity-0 group-hover:opacity-80 transition-opacity duration-300"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={1.5}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"
+                              />
+                            </svg>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
+                )}
 
-                  {project.screenshots && project.screenshots.length > 0 && (
-                    <div className="p-4 sm:p-6 md:p-8 border-b border-white/5">
-                      <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-4">
-                        Screenshots
-                      </h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                        {project.screenshots.map((src, i) => (
-                          <button
-                            key={i}
-                            type="button"
-                            onClick={() => setLightbox({ src, alt: `${project.title} screenshot ${i + 1}` })}
-                            className="relative aspect-video rounded-lg overflow-hidden border border-white/5 bg-white/[0.02] cursor-zoom-in group"
-                          >
-                            <Image
-                              src={src}
-                              alt={`${project.title} screenshot ${i + 1}`}
-                              fill
-                              className="object-cover transition-transform duration-300 group-hover:scale-105"
-                              sizes="(max-width: 640px) 50vw, 33vw"
-                            />
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                              <svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-80 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
-                              </svg>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="p-4 sm:p-6 md:p-8 grid md:grid-cols-2 gap-4 sm:gap-6">
-                    <div>
-                      <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
-                        Impact
-                      </h4>
-                      <ul className="space-y-2">
-                        {project.impact.map((item, i) => (
-                          <li
-                            key={i}
-                            className="flex items-start gap-2 text-sm text-gray-400"
-                          >
-                            <span className="text-[var(--neon-green)] mt-0.5 shrink-0">▸</span>
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
-                        Tech Stack
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {project.techStack.map((tech) => (
+                <div className="p-6 sm:p-8 md:p-10 grid md:grid-cols-2 gap-8">
+                  <div>
+                    <h4
+                      className="text-[10px] font-medium uppercase tracking-[0.2em] mb-4"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      Impact
+                    </h4>
+                    <ul className="space-y-2.5">
+                      {project.impact.map((item, i) => (
+                        <li
+                          key={i}
+                          className="flex items-start gap-3 text-sm"
+                          style={{ color: "var(--text-secondary)" }}
+                        >
                           <span
-                            key={tech}
-                            className="px-2.5 py-1 text-xs terminal-text rounded bg-white/5 text-gray-400 border border-white/5"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
+                            className="mt-1.5 shrink-0 w-1 h-1 rounded-full"
+                            style={{ background: "var(--accent)" }}
+                          />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4
+                      className="text-[10px] font-medium uppercase tracking-[0.2em] mb-4"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      Tech Stack
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {project.techStack.map((tech) => (
+                        <span
+                          key={tech}
+                          className="px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider rounded"
+                          style={{
+                            color: "var(--text-secondary)",
+                            background: "var(--surface)",
+                            border: "1px solid var(--border-color)",
+                          }}
+                        >
+                          {tech}
+                        </span>
+                      ))}
                     </div>
                   </div>
-                </motion.div>
-              ))}
-          </AnimatePresence>
-        </motion.div>
+                </div>
+              </motion.div>
+            ))}
+        </AnimatePresence>
       </div>
+
       <AnimatePresence>
         {lightbox && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 cursor-zoom-out"
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: "rgba(0,0,0,0.9)", backdropFilter: "blur(10px)" }}
             onClick={closeLightbox}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.92, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ duration: 0.3, ease }}
               className="relative max-w-[90vw] max-h-[90vh] w-auto h-auto"
               onClick={(e) => e.stopPropagation()}
             >
@@ -198,10 +283,24 @@ export default function Projects() {
               <button
                 type="button"
                 onClick={closeLightbox}
-                className="absolute top-2 right-2 w-9 h-9 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-white hover:bg-black/80 transition-colors"
+                className="absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center text-white transition-colors duration-300"
+                style={{
+                  background: "rgba(0,0,0,0.6)",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                }}
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </motion.div>

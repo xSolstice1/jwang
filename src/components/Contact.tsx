@@ -1,42 +1,77 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { profile } from "@/data/portfolio";
+import SectionReveal from "./SectionReveal";
+import ScrollParallax from "./ScrollParallax";
+import StrokeText from "./StrokeText";
 
 export default function Contact() {
   return (
-    <section id="contact" className="py-12 sm:py-16 md:py-24 px-4">
+    <section id="contact" className="py-24 sm:py-32 px-6">
       <div className="max-w-2xl mx-auto text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center justify-center gap-3 mb-12">
-            <div className="flex-1 h-px bg-white/10 max-w-[80px]" />
-            <span className="terminal-text text-sm text-[var(--neon-blue)]">06.</span>
-            <h2 className="text-2xl font-bold text-white">Contact</h2>
-            <div className="flex-1 h-px bg-white/10 max-w-[80px]" />
+        <SectionReveal>
+          <div className="flex items-center justify-center gap-4 mb-16">
+            <div
+              className="flex-1 h-px max-w-[80px]"
+              style={{ background: "var(--border-color)" }}
+            />
+            <ScrollParallax speed={-0.15}>
+              <span
+                className="font-mono text-xs tracking-widest"
+                style={{ color: "var(--accent)" }}
+              >
+                06
+              </span>
+            </ScrollParallax>
+            <StrokeText text="Contact" className="text-2xl sm:text-3xl font-bold" />
+            <div
+              className="flex-1 h-px max-w-[80px]"
+              style={{ background: "var(--border-color)" }}
+            />
           </div>
+        </SectionReveal>
 
-          <p className="text-gray-400 mb-8 leading-relaxed">
-            Open to opportunities in Data Engineering, AI Infrastructure, Software Engineering, and Platform Engineering.
-            If you&apos;re building something interesting, let&apos;s talk.
+        <SectionReveal delay={0.1}>
+          <p
+            className="text-base leading-relaxed mb-10"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            Open to opportunities in Data Engineering, AI Infrastructure,
+            Software Engineering, and Platform Engineering. If you&apos;re
+            building something interesting, let&apos;s talk.
           </p>
+        </SectionReveal>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+        <SectionReveal delay={0.2}>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-14">
             <a
               href={`mailto:${profile.email}`}
-              className="px-8 py-3 rounded-lg bg-[var(--neon-blue)]/10 border border-[var(--neon-blue)]/30 text-[var(--neon-blue)] hover:bg-[var(--neon-blue)]/20 transition-all text-sm font-medium terminal-text"
+              className="group relative px-10 py-4 text-sm font-mono tracking-wide overflow-hidden"
+              style={{
+                color: "var(--bg)",
+                background: "var(--accent)",
+              }}
             >
-              {profile.email}
+              <span className="relative z-10">{profile.email}</span>
+              <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
             </a>
             <a
               href={profile.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-3 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:border-white/20 hover:text-white transition-all text-sm font-medium"
+              className="px-10 py-4 text-sm font-medium tracking-wide uppercase border transition-all duration-300"
+              style={{
+                color: "var(--text-secondary)",
+                borderColor: "var(--border-color)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "var(--accent)";
+                e.currentTarget.style.color = "var(--accent)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "var(--border-color)";
+                e.currentTarget.style.color = "var(--text-secondary)";
+              }}
             >
               LinkedIn
             </a>
@@ -44,39 +79,63 @@ export default function Contact() {
               href={profile.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-3 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:border-white/20 hover:text-white transition-all text-sm font-medium"
+              className="px-10 py-4 text-sm font-medium tracking-wide uppercase border transition-all duration-300"
+              style={{
+                color: "var(--text-secondary)",
+                borderColor: "var(--border-color)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "var(--accent)";
+                e.currentTarget.style.color = "var(--accent)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "var(--border-color)";
+                e.currentTarget.style.color = "var(--text-secondary)";
+              }}
             >
               GitHub
             </a>
           </div>
+        </SectionReveal>
 
-          <div className="glass-card rounded-lg p-6 terminal-text text-xs text-left max-w-md mx-auto">
-            <div className="text-gray-600 mb-2">// open to</div>
+        <SectionReveal delay={0.3}>
+          <div className="card rounded-xl p-7 font-mono text-xs text-left max-w-md mx-auto">
+            <div className="mb-3" style={{ color: "var(--text-muted)" }}>
+              // open to
+            </div>
             <div className="space-y-1">
               <div>
-                <span className="text-[var(--neon-purple)]">roles</span>
-                <span className="text-gray-600">: [</span>
+                <span style={{ color: "var(--purple)" }}>roles</span>
+                <span style={{ color: "var(--text-muted)" }}>: [</span>
               </div>
-              <div className="pl-4 text-[var(--neon-green)]">&quot;Data Engineer&quot;,</div>
-              <div className="pl-4 text-[var(--neon-green)]">&quot;AI/ML Engineer&quot;,</div>
-              <div className="pl-4 text-[var(--neon-green)]">&quot;Software Engineer&quot;,</div>
-              <div className="pl-4 text-[var(--neon-green)]">&quot;Platform Engineer&quot;,</div>
+              {[
+                "Data Engineer",
+                "AI/ML Engineer",
+                "Software Engineer",
+                "Platform Engineer",
+              ].map((role) => (
+                <div key={role} className="pl-4" style={{ color: "var(--green)" }}>
+                  &quot;{role}&quot;,
+                </div>
+              ))}
+              <div style={{ color: "var(--text-muted)" }}>]</div>
               <div>
-                <span className="text-gray-600">]</span>
+                <span style={{ color: "var(--purple)" }}>location</span>
+                <span style={{ color: "var(--text-muted)" }}>: </span>
+                <span style={{ color: "var(--green)" }}>
+                  &quot;Singapore&quot;
+                </span>
               </div>
               <div>
-                <span className="text-[var(--neon-purple)]">location</span>
-                <span className="text-gray-600">: </span>
-                <span className="text-[var(--neon-green)]">&quot;Singapore&quot;</span>
-              </div>
-              <div>
-                <span className="text-[var(--neon-purple)]">status</span>
-                <span className="text-gray-600">: </span>
-                <span className="text-[var(--neon-blue)]">&quot;Available&quot;</span>
+                <span style={{ color: "var(--purple)" }}>status</span>
+                <span style={{ color: "var(--text-muted)" }}>: </span>
+                <span style={{ color: "var(--accent)" }}>
+                  &quot;Available&quot;
+                </span>
               </div>
             </div>
           </div>
-        </motion.div>
+        </SectionReveal>
       </div>
     </section>
   );

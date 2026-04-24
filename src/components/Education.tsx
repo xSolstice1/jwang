@@ -2,10 +2,14 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import SectionReveal from "./SectionReveal";
+import ScrollParallax from "./ScrollParallax";
+import StrokeText from "./StrokeText";
 
 const education = [
   {
-    degree: "Bachelor's Degree in Computer Science & Business Information Systems",
+    degree:
+      "Bachelor's Degree in Computer Science & Business Information Systems",
     detail: "Bachelor's Degree",
     school: "Murdoch University",
     location: "Singapore",
@@ -51,32 +55,32 @@ export default function Education() {
   const [expanded, setExpanded] = useState<number | null>(null);
 
   return (
-    <section id="education" className="py-12 sm:py-16 md:py-24 px-4">
-      <div className="max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center gap-3 mb-12">
-            <span className="terminal-text text-sm text-[var(--neon-blue)]">04.</span>
-            <h2 className="text-2xl font-bold text-white">Education</h2>
-            <div className="flex-1 h-px bg-white/10" />
+    <section id="education" className="py-24 sm:py-32 px-6">
+      <div className="max-w-6xl mx-auto">
+        <SectionReveal>
+          <div className="flex items-center gap-4 mb-16">
+            <ScrollParallax speed={-0.15}>
+              <span
+                className="font-mono text-xs tracking-widest"
+                style={{ color: "var(--accent)" }}
+              >
+                04
+              </span>
+            </ScrollParallax>
+            <StrokeText text="Education" className="text-2xl sm:text-3xl font-bold" />
+            <div
+              className="flex-1 h-px"
+              style={{ background: "var(--border-color)" }}
+            />
           </div>
+        </SectionReveal>
 
-          <div className="grid sm:grid-cols-2 gap-6">
-            {education.map((edu, i) => {
-              const isExpanded = expanded === i;
-              return (
-                <motion.div
-                  key={edu.school}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.15, duration: 0.5 }}
-                  className="glass-card rounded-xl p-6"
-                >
+        <div className="grid sm:grid-cols-2 gap-6">
+          {education.map((edu, i) => {
+            const isExpanded = expanded === i;
+            return (
+              <SectionReveal key={edu.school} delay={i * 0.1}>
+                <div className="card rounded-xl p-7">
                   <button
                     onClick={() => setExpanded(isExpanded ? null : i)}
                     className="w-full text-left"
@@ -88,33 +92,60 @@ export default function Education() {
                         </h3>
                         <div className="flex items-center gap-2 flex-wrap">
                           {edu.detail && (
-                            <span className="text-xs text-[var(--neon-purple)] terminal-text">
+                            <span
+                              className="text-[10px] font-mono uppercase tracking-widest"
+                              style={{ color: "var(--purple)" }}
+                            >
                               {edu.detail}
                             </span>
                           )}
                           {edu.gpa && (
-                            <span className="text-xs text-[var(--neon-green)] terminal-text">
+                            <span
+                              className="text-[10px] font-mono"
+                              style={{ color: "var(--green)" }}
+                            >
                               GPA: {edu.gpa}
                             </span>
                           )}
                         </div>
                       </div>
                       <svg
-                        className={`w-4 h-4 text-gray-600 transition-transform shrink-0 mt-1 ${
+                        className={`w-4 h-4 transition-transform duration-300 shrink-0 mt-1 ${
                           isExpanded ? "rotate-180" : ""
                         }`}
+                        style={{ color: "var(--text-muted)" }}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
                       </svg>
                     </div>
-                    <div className="mt-3 flex items-center justify-between">
-                      <span className="text-sm text-gray-400">{edu.school}</span>
-                      <span className="terminal-text text-xs text-gray-600">{edu.year}</span>
+                    <div className="mt-4 flex items-center justify-between">
+                      <span
+                        className="text-sm"
+                        style={{ color: "var(--text-secondary)" }}
+                      >
+                        {edu.school}
+                      </span>
+                      <span
+                        className="font-mono text-[11px]"
+                        style={{ color: "var(--text-muted)" }}
+                      >
+                        {edu.year}
+                      </span>
                     </div>
-                    <span className="text-xs text-gray-600">{edu.location}</span>
+                    <span
+                      className="text-xs"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      {edu.location}
+                    </span>
                   </button>
 
                   <AnimatePresence>
@@ -123,36 +154,55 @@ export default function Education() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{
+                          duration: 0.3,
+                          ease: [0.22, 1, 0.36, 1],
+                        }}
                         className="overflow-hidden"
                       >
-                        <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
-                          {Object.entries(edu.achievements).map(([category, items]) => (
-                            <div key={category}>
-                              <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
-                                {category}
-                              </h4>
-                              <div className="flex flex-wrap gap-1.5">
-                                {items.map((item: string) => (
-                                  <span
-                                    key={item}
-                                    className="px-2 py-0.5 text-xs terminal-text rounded bg-white/5 text-gray-400 border border-white/5"
-                                  >
-                                    {item}
-                                  </span>
-                                ))}
+                        <div
+                          className="mt-5 pt-5 space-y-4"
+                          style={{
+                            borderTop: "1px solid var(--border-color)",
+                          }}
+                        >
+                          {Object.entries(edu.achievements).map(
+                            ([category, items]) => (
+                              <div key={category}>
+                                <h4
+                                  className="text-[10px] font-medium uppercase tracking-[0.2em] mb-3"
+                                  style={{ color: "var(--text-muted)" }}
+                                >
+                                  {category}
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                  {items.map((item: string) => (
+                                    <span
+                                      key={item}
+                                      className="px-2.5 py-1 text-[10px] font-mono rounded"
+                                      style={{
+                                        color: "var(--text-secondary)",
+                                        background: "var(--surface)",
+                                        border:
+                                          "1px solid var(--border-color)",
+                                      }}
+                                    >
+                                      {item}
+                                    </span>
+                                  ))}
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            )
+                          )}
                         </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </motion.div>
-              );
-            })}
-          </div>
-        </motion.div>
+                </div>
+              </SectionReveal>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

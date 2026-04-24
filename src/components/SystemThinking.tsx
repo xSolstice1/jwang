@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { systemThinking } from "@/data/portfolio";
+import SectionReveal from "./SectionReveal";
+import ScrollParallax from "./ScrollParallax";
+import StrokeText from "./StrokeText";
 
 const icons: Record<string, React.ReactNode> = {
   scale: (
@@ -31,92 +34,123 @@ export default function SystemThinking() {
   const [expanded, setExpanded] = useState<number | null>(null);
 
   return (
-    <section className="py-12 sm:py-16 md:py-24 px-4">
-      <div className="max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <span className="terminal-text text-sm text-[var(--neon-purple)]">sys.</span>
-            <h2 className="text-2xl font-bold text-white">System Thinking</h2>
-            <div className="flex-1 h-px bg-white/10" />
+    <section className="py-24 sm:py-32 px-6">
+      <div className="max-w-6xl mx-auto">
+        <SectionReveal>
+          <div className="flex items-center gap-4 mb-4">
+            <ScrollParallax speed={-0.15}>
+              <span
+                className="font-mono text-xs tracking-widest"
+                style={{ color: "var(--purple)" }}
+              >
+                sys
+              </span>
+            </ScrollParallax>
+            <StrokeText text="System Thinking" className="text-2xl sm:text-3xl font-bold" />
+            <div
+              className="flex-1 h-px"
+              style={{ background: "var(--border-color)" }}
+            />
           </div>
-          <p className="text-gray-500 text-sm mb-12 max-w-xl">
-            How I approach building systems. Click each card to explore the principles I design around.
+          <p
+            className="text-sm mb-16 max-w-xl"
+            style={{ color: "var(--text-muted)" }}
+          >
+            How I approach building systems. Click each card to explore the
+            principles I design around.
           </p>
+        </SectionReveal>
 
-          <div className="grid sm:grid-cols-2 gap-4">
-            {systemThinking.map((item, i) => {
-              const isExpanded = expanded === i;
-              return (
-                <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
+        <div className="grid sm:grid-cols-2 gap-5">
+          {systemThinking.map((item, i) => {
+            const isExpanded = expanded === i;
+            return (
+              <SectionReveal key={item.title} delay={i * 0.08}>
+                <button
+                  onClick={() => setExpanded(isExpanded ? null : i)}
+                  className="w-full text-left card rounded-xl p-7 transition-all duration-400"
+                  style={{
+                    borderColor: isExpanded
+                      ? "rgba(199, 146, 234, 0.2)"
+                      : undefined,
+                  }}
                 >
-                  <button
-                    onClick={() => setExpanded(isExpanded ? null : i)}
-                    className={`w-full text-left glass-card rounded-xl p-6 transition-all ${
-                      isExpanded ? "border-[var(--neon-purple)]/30 shadow-lg shadow-purple-500/5" : ""
-                    }`}
-                  >
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="text-[var(--neon-purple)] mt-0.5">
-                        {icons[item.icon]}
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-white font-semibold text-sm">{item.title}</h3>
-                      </div>
-                      <svg
-                        className={`w-4 h-4 text-gray-600 transition-transform ${
-                          isExpanded ? "rotate-180" : ""
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
+                  <div className="flex items-start gap-3 mb-3">
+                    <div style={{ color: "var(--purple)" }}>
+                      {icons[item.icon]}
                     </div>
-                    <p className="text-sm text-gray-500 leading-relaxed">{item.description}</p>
+                    <div className="flex-1">
+                      <h3 className="text-white font-semibold text-sm">
+                        {item.title}
+                      </h3>
+                    </div>
+                    <svg
+                      className={`w-4 h-4 transition-transform duration-300 ${
+                        isExpanded ? "rotate-180" : ""
+                      }`}
+                      style={{ color: "var(--text-muted)" }}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                  <p
+                    className="text-sm leading-relaxed"
+                    style={{ color: "var(--text-muted)" }}
+                  >
+                    {item.description}
+                  </p>
 
-                    <AnimatePresence>
-                      {isExpanded && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="overflow-hidden"
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{
+                          duration: 0.3,
+                          ease: [0.22, 1, 0.36, 1],
+                        }}
+                        className="overflow-hidden"
+                      >
+                        <div
+                          className="mt-5 pt-5 space-y-2.5"
+                          style={{ borderTop: "1px solid var(--border-color)" }}
                         >
-                          <div className="mt-4 pt-4 border-t border-white/5 space-y-2">
-                            {item.principles.map((principle, j) => (
-                              <motion.div
-                                key={j}
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: j * 0.1 }}
-                                className="flex items-start gap-2 text-sm text-gray-400"
+                          {item.principles.map((principle, j) => (
+                            <motion.div
+                              key={j}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: j * 0.08 }}
+                              className="flex items-start gap-3 text-sm"
+                              style={{ color: "var(--text-secondary)" }}
+                            >
+                              <span
+                                style={{ color: "var(--purple)" }}
+                                className="shrink-0"
                               >
-                                <span className="text-[var(--neon-purple)] mt-0.5 shrink-0">→</span>
-                                {principle}
-                              </motion.div>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </button>
-                </motion.div>
-              );
-            })}
-          </div>
-        </motion.div>
+                                &rarr;
+                              </span>
+                              {principle}
+                            </motion.div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </button>
+              </SectionReveal>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

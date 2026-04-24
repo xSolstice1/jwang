@@ -4,45 +4,23 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { PipelineNode } from "@/data/portfolio";
 
-const typeColors: Record<PipelineNode["type"], { bg: string; border: string; text: string; glow: string }> = {
-  source: {
-    bg: "bg-blue-500/10",
-    border: "border-blue-500/30",
-    text: "text-blue-400",
-    glow: "shadow-blue-500/20",
-  },
-  process: {
-    bg: "bg-purple-500/10",
-    border: "border-purple-500/30",
-    text: "text-purple-400",
-    glow: "shadow-purple-500/20",
-  },
-  storage: {
-    bg: "bg-green-500/10",
-    border: "border-green-500/30",
-    text: "text-green-400",
-    glow: "shadow-green-500/20",
-  },
-  api: {
-    bg: "bg-cyan-500/10",
-    border: "border-cyan-500/30",
-    text: "text-cyan-400",
-    glow: "shadow-cyan-500/20",
-  },
-  output: {
-    bg: "bg-amber-500/10",
-    border: "border-amber-500/30",
-    text: "text-amber-400",
-    glow: "shadow-amber-500/20",
-  },
+const typeColors: Record<
+  PipelineNode["type"],
+  { accent: string; label: string }
+> = {
+  source: { accent: "var(--blue)", label: "source" },
+  process: { accent: "var(--purple)", label: "process" },
+  storage: { accent: "var(--green)", label: "storage" },
+  api: { accent: "var(--accent)", label: "api" },
+  output: { accent: "#ffcb6b", label: "output" },
 };
 
 const typeIcons: Record<PipelineNode["type"], string> = {
-  source: "◆",
-  process: "⚙",
-  storage: "◉",
-  api: "⟡",
-  output: "▶",
+  source: "\u25c6",
+  process: "\u2699",
+  storage: "\u25c9",
+  api: "\u27e1",
+  output: "\u25b6",
 };
 
 export default function PipelineFlow({ nodes }: { nodes: PipelineNode[] }) {
@@ -61,15 +39,23 @@ export default function PipelineFlow({ nodes }: { nodes: PipelineNode[] }) {
                 onClick={() => setActiveNode(isActive ? null : node.id)}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`relative w-full max-w-sm px-4 py-2 rounded-lg border transition-all cursor-pointer ${
-                  colors.bg
-                } ${colors.border} ${
-                  isActive ? `shadow-lg ${colors.glow}` : ""
-                }`}
+                className="relative w-full max-w-sm px-5 py-2.5 rounded-lg transition-all duration-300"
+                style={{
+                  background: `color-mix(in srgb, ${colors.accent} 6%, transparent)`,
+                  border: `1px solid color-mix(in srgb, ${colors.accent} ${isActive ? "30" : "15"}%, transparent)`,
+                  boxShadow: isActive
+                    ? `0 0 20px color-mix(in srgb, ${colors.accent} 10%, transparent)`
+                    : "none",
+                }}
               >
                 <div className="flex items-center gap-2 justify-center">
-                  <span className={`text-xs ${colors.text}`}>{typeIcons[node.type]}</span>
-                  <span className={`text-xs sm:text-sm terminal-text ${colors.text}`}>
+                  <span className="text-xs" style={{ color: colors.accent }}>
+                    {typeIcons[node.type]}
+                  </span>
+                  <span
+                    className="text-xs sm:text-sm font-mono"
+                    style={{ color: colors.accent }}
+                  >
                     {node.label}
                   </span>
                 </div>
@@ -77,8 +63,19 @@ export default function PipelineFlow({ nodes }: { nodes: PipelineNode[] }) {
 
               {i < nodes.length - 1 && (
                 <div className="flex flex-col items-center">
-                  <div className="w-px h-2.5 bg-gradient-to-b from-white/20 to-white/10" />
-                  <svg className="w-2.5 h-2.5 text-white/20 -mt-0.5" fill="currentColor" viewBox="0 0 8 8">
+                  <div
+                    className="w-px h-2.5"
+                    style={{
+                      background:
+                        "linear-gradient(to bottom, rgba(255,255,255,0.12), rgba(255,255,255,0.05))",
+                    }}
+                  />
+                  <svg
+                    className="w-2.5 h-2.5 -mt-0.5"
+                    style={{ color: "rgba(255,255,255,0.12)" }}
+                    fill="currentColor"
+                    viewBox="0 0 8 8"
+                  >
                     <path d="M0 0l4 4 4-4z" />
                   </svg>
                 </div>
@@ -94,8 +91,8 @@ export default function PipelineFlow({ nodes }: { nodes: PipelineNode[] }) {
             initial={{ opacity: 0, y: -10, height: 0 }}
             animate={{ opacity: 1, y: 0, height: "auto" }}
             exit={{ opacity: 0, y: -10, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="mt-4 overflow-hidden"
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-5 overflow-hidden"
           >
             {nodes
               .filter((n) => n.id === activeNode)
@@ -104,18 +101,42 @@ export default function PipelineFlow({ nodes }: { nodes: PipelineNode[] }) {
                 return (
                   <div
                     key={node.id}
-                    className={`p-3 sm:p-4 rounded-lg border ${colors.bg} ${colors.border}`}
+                    className="p-4 rounded-lg"
+                    style={{
+                      background: `color-mix(in srgb, ${colors.accent} 5%, transparent)`,
+                      border: `1px solid color-mix(in srgb, ${colors.accent} 15%, transparent)`,
+                    }}
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <span className={`text-sm ${colors.text}`}>{typeIcons[node.type]}</span>
-                      <span className={`terminal-text text-sm font-medium ${colors.text}`}>
+                      <span
+                        className="text-sm"
+                        style={{ color: colors.accent }}
+                      >
+                        {typeIcons[node.type]}
+                      </span>
+                      <span
+                        className="font-mono text-sm font-medium"
+                        style={{ color: colors.accent }}
+                      >
                         {node.label}
                       </span>
-                      <span className={`text-xs px-2 py-0.5 rounded ${colors.bg} ${colors.text} border ${colors.border}`}>
-                        {node.type}
+                      <span
+                        className="text-[10px] px-2 py-0.5 rounded font-mono uppercase tracking-wider"
+                        style={{
+                          color: colors.accent,
+                          background: `color-mix(in srgb, ${colors.accent} 8%, transparent)`,
+                          border: `1px solid color-mix(in srgb, ${colors.accent} 15%, transparent)`,
+                        }}
+                      >
+                        {colors.label}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-400">{node.details}</p>
+                    <p
+                      className="text-sm"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      {node.details}
+                    </p>
                   </div>
                 );
               })}

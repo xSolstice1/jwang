@@ -40,7 +40,7 @@ export default function Terminal({ onClose }: { onClose: () => void }) {
       return;
     }
 
-    if (trimmed === "" ) {
+    if (trimmed === "") {
       setLines((prev) => [...prev, ...newLines]);
       return;
     }
@@ -91,25 +91,44 @@ export default function Terminal({ onClose }: { onClose: () => void }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -20, scale: 0.95 }}
+      initial={{ opacity: 0, y: -20, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -20, scale: 0.95 }}
-      transition={{ duration: 0.2 }}
-      className="fixed top-20 left-4 right-4 md:left-auto md:right-8 md:w-[600px] z-40 rounded-lg overflow-hidden shadow-2xl shadow-black/50 border border-white/10"
-      style={{ background: "rgba(10, 10, 20, 0.95)" }}
+      exit={{ opacity: 0, y: -20, scale: 0.96 }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed top-20 left-4 right-4 md:left-auto md:right-8 md:w-[600px] z-40 rounded-xl overflow-hidden shadow-2xl shadow-black/60"
+      style={{
+        background: "rgba(8, 8, 12, 0.97)",
+        border: "1px solid var(--border-color)",
+        backdropFilter: "blur(20px)",
+      }}
     >
-      <div className="flex items-center justify-between px-4 py-2.5 bg-white/5 border-b border-white/5">
+      <div
+        className="flex items-center justify-between px-5 py-3"
+        style={{
+          background: "var(--surface)",
+          borderBottom: "1px solid var(--border-color)",
+        }}
+      >
         <div className="flex items-center gap-2">
           <div className="flex gap-1.5">
-            <button onClick={onClose} className="w-3 h-3 rounded-full bg-red-500/80 hover:bg-red-500" />
+            <button
+              onClick={onClose}
+              className="w-3 h-3 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors"
+            />
             <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
             <div className="w-3 h-3 rounded-full bg-green-500/80" />
           </div>
-          <span className="text-xs text-gray-500 terminal-text ml-2">jinwei@portfolio:~</span>
+          <span
+            className="text-[11px] font-mono ml-2"
+            style={{ color: "var(--text-muted)" }}
+          >
+            jinwei@portfolio:~
+          </span>
         </div>
         <button
           onClick={onClose}
-          className="text-gray-500 hover:text-white text-xs terminal-text"
+          className="font-mono text-[11px] transition-colors duration-300"
+          style={{ color: "var(--text-muted)" }}
         >
           [ESC]
         </button>
@@ -117,7 +136,7 @@ export default function Terminal({ onClose }: { onClose: () => void }) {
 
       <div
         ref={scrollRef}
-        className="p-4 h-[250px] sm:h-[350px] md:h-[400px] max-h-[60vh] overflow-y-auto terminal-text text-sm leading-relaxed"
+        className="p-5 h-[250px] sm:h-[350px] md:h-[400px] max-h-[60vh] overflow-y-auto font-mono text-sm leading-relaxed"
         onClick={() => inputRef.current?.focus()}
       >
         <AnimatePresence>
@@ -127,13 +146,15 @@ export default function Terminal({ onClose }: { onClose: () => void }) {
               initial={{ opacity: 0, x: -5 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.1 }}
-              className={`${
-                line.type === "input"
-                  ? "text-[var(--neon-green)]"
-                  : line.type === "error"
-                  ? "text-red-400"
-                  : "text-gray-300"
-              } ${line.content === "" ? "h-4" : ""}`}
+              style={{
+                color:
+                  line.type === "input"
+                    ? "var(--accent)"
+                    : line.type === "error"
+                    ? "#f07178"
+                    : "var(--text-secondary)",
+              }}
+              className={line.content === "" ? "h-4" : ""}
             >
               {line.content}
             </motion.div>
@@ -141,18 +162,23 @@ export default function Terminal({ onClose }: { onClose: () => void }) {
         </AnimatePresence>
 
         <form onSubmit={handleSubmit} className="flex items-center mt-1">
-          <span className="text-[var(--neon-green)] mr-2">~ $</span>
+          <span className="mr-2" style={{ color: "var(--accent)" }}>
+            ~ $
+          </span>
           <input
             ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 bg-transparent outline-none text-white caret-[var(--neon-green)]"
+            className="flex-1 bg-transparent outline-none text-white"
+            style={{ caretColor: "var(--accent)" }}
             autoComplete="off"
             spellCheck={false}
           />
-          <span className="animate-blink text-[var(--neon-green)]">▊</span>
+          <span className="animate-blink" style={{ color: "var(--accent)" }}>
+            &#x2588;
+          </span>
         </form>
       </div>
     </motion.div>

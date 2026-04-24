@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { useState, useCallback } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
@@ -14,46 +14,92 @@ import Skills from "@/components/Skills";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
-const AnimatedBackground = dynamic(() => import("@/components/AnimatedBackground"), {
+const AnimatedBackground = dynamic(
+  () => import("@/components/AnimatedBackground"),
+  { ssr: false }
+);
+const Terminal = dynamic(() => import("@/components/Terminal"), { ssr: false });
+const CustomCursor = dynamic(() => import("@/components/CustomCursor"), {
   ssr: false,
 });
-const Terminal = dynamic(() => import("@/components/Terminal"), { ssr: false });
+const LoadingScreen = dynamic(() => import("@/components/LoadingScreen"), {
+  ssr: false,
+});
+const SmoothScroll = dynamic(() => import("@/components/SmoothScroll"), {
+  ssr: false,
+});
+const GrainOverlay = dynamic(() => import("@/components/GrainOverlay"), {
+  ssr: false,
+});
 
 export default function Home() {
   const [terminalOpen, setTerminalOpen] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  const onLoadComplete = useCallback(() => setLoaded(true), []);
 
   return (
-    <div className="relative min-h-screen grid-bg">
-      <AnimatedBackground />
-
-      <Navbar
-        terminalOpen={terminalOpen}
-        onToggleTerminal={() => setTerminalOpen(!terminalOpen)}
-      />
+    <>
+      <CustomCursor />
+      <GrainOverlay />
 
       <AnimatePresence>
-        {terminalOpen && <Terminal onClose={() => setTerminalOpen(false)} />}
+        {!loaded && <LoadingScreen onComplete={onLoadComplete} />}
       </AnimatePresence>
 
-      <main className="relative z-10">
-        <Hero />
-        <div className="section-divider" />
-        <About />
-        <div className="section-divider" />
-        <Experience />
-        <div className="section-divider" />
-        <Projects />
-        <div className="section-divider" />
-        <SystemThinking />
-        <div className="section-divider" />
-        <Education />
-        <div className="section-divider" />
-        <Skills />
-        <div className="section-divider" />
-        <Contact />
-      </main>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: loaded ? 1 : 0 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+        className="relative min-h-screen"
+      >
+        <AnimatedBackground />
 
-      <Footer />
+        <Navbar
+          terminalOpen={terminalOpen}
+          onToggleTerminal={() => setTerminalOpen(!terminalOpen)}
+        />
+
+        <AnimatePresence>
+          {terminalOpen && <Terminal onClose={() => setTerminalOpen(false)} />}
+        </AnimatePresence>
+
+        <SmoothScroll>
+          <main className="relative z-10">
+            <Hero />
+            <Divider />
+            <About />
+            <Divider />
+            <Experience />
+            <Divider />
+            <Projects />
+            <Divider />
+            <SystemThinking />
+            <Divider />
+            <Education />
+            <Divider />
+            <Skills />
+            <Divider />
+            <Contact />
+          </main>
+
+          <Footer />
+        </SmoothScroll>
+      </motion.div>
+    </>
+  );
+}
+
+function Divider() {
+  return (
+    <div className="max-w-6xl mx-auto px-6">
+      <div
+        className="h-px"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, var(--border-color), transparent)",
+        }}
+      />
     </div>
   );
 }
