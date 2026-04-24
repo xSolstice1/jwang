@@ -3,6 +3,9 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import ScrollParallax from "./ScrollParallax";
+import dynamic from "next/dynamic";
+
+const HelixCanvas = dynamic(() => import("./HelixCanvas"), { ssr: false });
 
 const roles = [
   "Data Engineer",
@@ -92,6 +95,11 @@ export default function Hero() {
 
   return (
     <section ref={sectionRef} className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden">
+      {/* DNA Helix — right side decorative */}
+      <div className="absolute right-0 top-0 w-1/3 h-full hidden md:block">
+        <HelixCanvas />
+      </div>
+
       <motion.div
         style={{ opacity: heroOpacity, scale: heroScale }}
         className="max-w-5xl mx-auto text-center"
