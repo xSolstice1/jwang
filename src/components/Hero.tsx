@@ -94,32 +94,31 @@ export default function Hero() {
   const nameChars = "Ang Jin Wei".split("");
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden">
-      {/* DNA Helix — full viewport backdrop, centered behind text, desktop only */}
-      <div className="absolute inset-0 hidden sm:block">
+    <section ref={sectionRef} className="relative min-h-[100svh] flex items-center justify-center px-4 sm:px-6">
+      {/* DNA Helix — desktop only */}
+      <div className="absolute inset-0 overflow-hidden">
         <HelixCanvas />
       </div>
 
       <motion.div
         style={{ opacity: heroOpacity, scale: heroScale }}
-        className="max-w-5xl mx-auto text-center"
+        className="max-w-5xl mx-auto text-center w-full"
       >
-        {/* Monospace tagline — clip reveal */}
         <motion.div
           variants={lineVariants}
           custom={0.3}
           initial="hidden"
           animate="visible"
-          className="font-mono text-xs tracking-[0.3em] uppercase mb-8"
+          className="font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-6 sm:mb-8"
           style={{ color: "var(--accent)" }}
         >
           <span className="opacity-50">&gt;_</span> portfolio.render()
         </motion.div>
 
-        {/* Name — per-character 3D reveal */}
         <motion.div style={{ y: nameY }}>
-          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 tracking-tight leading-[0.9]"
-              style={{ perspective: "600px" }}
+          <h1
+            className="text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-4 sm:mb-6 tracking-tight leading-[0.9]"
+            style={{ perspective: "600px" }}
           >
             {nameChars.map((char, i) => (
               <motion.span
@@ -142,7 +141,6 @@ export default function Hero() {
           </h1>
         </motion.div>
 
-        {/* Typewriter role — clip reveal */}
         <motion.div style={{ y: taglineY }}>
           <motion.div
             variants={lineVariants}
@@ -150,9 +148,9 @@ export default function Hero() {
             initial="hidden"
             animate="visible"
           >
-            <div className="h-10 flex items-center justify-center mb-10">
+            <div className="h-8 sm:h-10 flex items-center justify-center mb-6 sm:mb-10">
               <span
-                className="font-mono text-base sm:text-xl md:text-2xl"
+                className="font-mono text-sm sm:text-xl md:text-2xl"
                 style={{ color: "var(--text-secondary)" }}
               >
                 {displayed}
@@ -163,13 +161,12 @@ export default function Hero() {
             </div>
           </motion.div>
 
-          {/* Description — clip reveal */}
           <motion.p
             variants={lineVariants}
             custom={1.2}
             initial="hidden"
             animate="visible"
-            className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-14 leading-relaxed"
+            className="text-sm sm:text-lg md:text-xl max-w-2xl mx-auto mb-8 sm:mb-14 leading-relaxed px-2"
             style={{ color: "var(--text-secondary)" }}
           >
             I build scalable data systems, AI pipelines, and software that power
@@ -177,18 +174,17 @@ export default function Hero() {
           </motion.p>
         </motion.div>
 
-        {/* CTA buttons — stagger clip reveal */}
         <motion.div
           variants={lineVariants}
           custom={1.5}
           initial="hidden"
           animate="visible"
           style={{ y: ctaY }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 sm:px-0"
         >
           <a
             href="#projects"
-            className="group relative px-10 py-4 text-sm font-medium tracking-wide uppercase overflow-hidden"
+            className="group relative px-8 sm:px-10 py-3.5 sm:py-4 text-sm font-medium tracking-wide uppercase overflow-hidden text-center"
             style={{ color: "var(--bg)", background: "var(--accent)" }}
           >
             <span className="relative z-10">View Projects</span>
@@ -196,7 +192,7 @@ export default function Hero() {
           </a>
           <a
             href="#contact"
-            className="px-10 py-4 text-sm font-medium tracking-wide uppercase border transition-colors duration-300"
+            className="px-8 sm:px-10 py-3.5 sm:py-4 text-sm font-medium tracking-wide uppercase border transition-colors duration-300 text-center"
             style={{
               color: "var(--text-secondary)",
               borderColor: "var(--border-color)",
@@ -214,21 +210,20 @@ export default function Hero() {
           </a>
         </motion.div>
 
-        {/* Marquee — parallax push down on scroll */}
         <motion.div
           variants={lineVariants}
           custom={2.0}
           initial="hidden"
           animate="visible"
           style={{ y: marqueeY }}
-          className="mt-20 overflow-hidden"
+          className="mt-10 sm:mt-20 overflow-hidden"
         >
           <div className="marquee-track">
             <div className="marquee-content">
               {[...techStack, ...techStack].map((t, i) => (
                 <span
                   key={i}
-                  className="font-mono text-[11px] uppercase tracking-[0.25em] mx-6 whitespace-nowrap"
+                  className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.15em] sm:tracking-[0.25em] mx-3 sm:mx-6 whitespace-nowrap"
                   style={{ color: "var(--text-muted)" }}
                 >
                   {t}
@@ -239,7 +234,7 @@ export default function Hero() {
         </motion.div>
       </motion.div>
 
-      <ScrollParallax speed={-0.3} className="absolute bottom-10 left-1/2 -translate-x-1/2">
+      <ScrollParallax speed={-0.3} className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden sm:block">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
