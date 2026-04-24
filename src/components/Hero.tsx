@@ -95,8 +95,8 @@ export default function Hero() {
 
   return (
     <section ref={sectionRef} className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden">
-      {/* DNA Helix — full viewport backdrop, centered behind text */}
-      <div className="absolute inset-0">
+      {/* DNA Helix — full viewport backdrop, centered behind text, desktop only */}
+      <div className="absolute inset-0 hidden sm:block">
         <HelixCanvas />
       </div>
 

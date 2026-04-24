@@ -31,6 +31,9 @@ const SmoothScroll = dynamic(() => import("@/components/SmoothScroll"), {
 const GrainOverlay = dynamic(() => import("@/components/GrainOverlay"), {
   ssr: false,
 });
+const LightSpears = dynamic(() => import("@/components/LightSpears"), {
+  ssr: false,
+});
 
 export default function Home() {
   const [terminalOpen, setTerminalOpen] = useState(false);
@@ -42,6 +45,7 @@ export default function Home() {
     <>
       <CustomCursor />
       <GrainOverlay />
+      <LightSpears />
 
       <AnimatePresence>
         {!loaded && <LoadingScreen onComplete={onLoadComplete} />}
