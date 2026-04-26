@@ -1,14 +1,19 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Lenis from "lenis";
 import { motion, useScroll, useSpring, useTransform, useMotionValue } from "framer-motion";
 
 export default function SmoothScroll({ children }: { children: ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
   const velocity = useMotionValue(0);
+  const [isTouch, setIsTouch] = useState(false);
 
   useEffect(() => {
+    const touch = window.matchMedia("(pointer: coarse)").matches;
+    setIsTouch(touch);
+    if (touch) return;
+
     const lenis = new Lenis({
       lerp: 0.12,
       smoothWheel: true,
@@ -49,7 +54,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
         }}
       />
 
-      <motion.div style={{ skewY }}>
+      <motion.div style={isTouch ? undefined : { skewY }}>
         {children}
       </motion.div>
     </>
