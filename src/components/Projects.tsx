@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { projects } from "@/data/portfolio";
@@ -9,14 +9,112 @@ import SectionReveal from "./SectionReveal";
 import ScrollParallax from "./ScrollParallax";
 import StrokeText from "./StrokeText";
 
+function isIOS() {
+  if (typeof navigator === "undefined") return false;
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+function useTilt() {
+  const ref = useRef<HTMLDivElement>(null);
+  const gyroActive = useRef(false);
+  const baseOrientation = useRef<{ beta: number; gamma: number } | null>(null);
+
+  const applyTransform = useCallback((rotY: number, rotX: number) => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.transform = `perspective(800px) rotateY(${rotY}deg) rotateX(${rotX}deg) scale3d(1.01,1.01,1.01)`;
+  }, []);
+
+  const resetTransform = useCallback(() => {
+    const el = ref.current;
+    if (el) el.style.transform = "perspective(800px) rotateY(0) rotateX(0) scale3d(1,1,1)";
+    gyroActive.current = false;
+    baseOrientation.current = null;
+  }, []);
+
+  // Desktop: mouse
+  const onMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    applyTransform(x * 6, -y * 6);
+  }, [applyTransform]);
+
+  // iOS: touch position
+  const onTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (!isIOS()) return;
+    const el = ref.current;
+    if (!el) return;
+    const touch = e.touches[0];
+    const rect = el.getBoundingClientRect();
+    const x = (touch.clientX - rect.left) / rect.width - 0.5;
+    const y = (touch.clientY - rect.top) / rect.height - 0.5;
+    applyTransform(x * 8, -y * 8);
+  }, [applyTransform]);
+
+  // Android: gyro on touch start
+  const onGyro = useCallback((e: DeviceOrientationEvent) => {
+    if (!gyroActive.current || e.beta == null || e.gamma == null) return;
+    if (!baseOrientation.current) {
+      baseOrientation.current = { beta: e.beta, gamma: e.gamma };
+      return;
+    }
+    const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
+    const gamma = clamp(e.gamma - baseOrientation.current.gamma, -30, 30);
+    const beta = clamp(e.beta - baseOrientation.current.beta, -30, 30);
+    applyTransform((gamma / 30) * 8, -(beta / 30) * 8);
+  }, [applyTransform]);
+
+  const onTouchStart = useCallback(() => {
+    if (isIOS()) return;
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    if (!isTouch) return;
+    gyroActive.current = true;
+    baseOrientation.current = null;
+    window.addEventListener("deviceorientation", onGyro);
+  }, [onGyro]);
+
+  const onTouchEnd = useCallback(() => {
+    if (!isIOS()) {
+      window.removeEventListener("deviceorientation", onGyro);
+    }
+    resetTransform();
+  }, [onGyro, resetTransform]);
+
+  useEffect(() => {
+    return () => {
+      window.removeEventListener("deviceorientation", onGyro);
+    };
+  }, [onGyro]);
+
+  return { ref, onMove, onLeave: resetTransform, onTouchStart, onTouchMove, onTouchEnd };
+}
+
+const projectCategories = [
+  { label: "All", filter: null },
+  { label: "Data & AI", filter: (p: typeof projects[0]) => ["Neo4j", "Snowflake", "GraphRAG", "AWS Bedrock", "dbt"].some((t) => p.techStack.includes(t)) },
+  { label: "Cloud & Infra", filter: (p: typeof projects[0]) => ["AWS", "Terraform", "Docker", "AWS Batch", "ECR", "S3", "Firebase"].some((t) => p.techStack.includes(t)) },
+  { label: "Full-Stack", filter: (p: typeof projects[0]) => ["React", "Next.js", "FastAPI", ".NET", "Go", "Electron"].some((t) => p.techStack.includes(t)) },
+];
+
 export default function Projects() {
   const [activeProject, setActiveProject] = useState(projects[0].id);
   const [lightbox, setLightbox] = useState<{
     src: string;
     alt: string;
   } | null>(null);
+  const [activeCategory, setActiveCategory] = useState(0);
+  const tilt = useTilt();
 
   const closeLightbox = useCallback(() => setLightbox(null), []);
+
+  const filteredProjects = useMemo(() => {
+    const cat = projectCategories[activeCategory];
+    return cat.filter ? projects.filter(cat.filter) : projects;
+  }, [activeCategory]);
 
   useEffect(() => {
     if (!lightbox) return;
@@ -34,7 +132,7 @@ export default function Projects() {
   const ease = [0.22, 1, 0.36, 1] as const;
 
   return (
-    <section id="projects" className="py-24 sm:py-32 px-6">
+    <section id="projects" className="py-16 sm:py-24 md:py-32 px-6">
       <div className="max-w-6xl mx-auto">
         <SectionReveal>
           <div className="flex items-center gap-4 mb-16">
@@ -55,8 +153,30 @@ export default function Projects() {
         </SectionReveal>
 
         <SectionReveal delay={0.1}>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {projectCategories.map((cat, i) => (
+              <button
+                key={cat.label}
+                onClick={() => {
+                  setActiveCategory(i);
+                  const available = cat.filter ? projects.filter(cat.filter) : projects;
+                  if (available.length > 0 && !available.find((p) => p.id === activeProject)) {
+                    setActiveProject(available[0].id);
+                  }
+                }}
+                className="px-3 py-1 text-[10px] font-mono uppercase tracking-wider rounded-full transition-all duration-300"
+                style={{
+                  color: activeCategory === i ? "var(--bg)" : "var(--text-muted)",
+                  background: activeCategory === i ? "var(--purple)" : "transparent",
+                  border: `1px solid ${activeCategory === i ? "var(--purple)" : "var(--border-color)"}`,
+                }}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
           <div className="flex flex-wrap gap-2 mb-10">
-            {projects.map((project) => (
+            {filteredProjects.map((project) => (
               <button
                 key={project.id}
                 onClick={() => setActiveProject(project.id)}
@@ -84,16 +204,29 @@ export default function Projects() {
         </SectionReveal>
 
         <AnimatePresence mode="wait">
-          {projects
+          {filteredProjects
             .filter((p) => p.id === activeProject)
             .map((project) => (
               <motion.div
                 key={project.id}
+                ref={tilt.ref}
+                onMouseMove={tilt.onMove}
+                onMouseLeave={tilt.onLeave}
+                onTouchStart={tilt.onTouchStart}
+                onTouchMove={tilt.onTouchMove}
+                onTouchEnd={tilt.onTouchEnd}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5, ease }}
-                className="card rounded-xl overflow-hidden"
+                className="rounded-xl overflow-hidden"
+                style={{
+                  background: "rgba(255, 255, 255, 0.03)",
+                  backdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  transition: "transform 0.15s ease-out, border-color 0.4s ease",
+                  willChange: "transform",
+                }}
               >
                 <div className="p-6 sm:p-8 md:p-10" style={{ borderBottom: "1px solid var(--border-color)" }}>
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">

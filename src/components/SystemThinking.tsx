@@ -34,7 +34,7 @@ export default function SystemThinking() {
   const [expanded, setExpanded] = useState<number | null>(null);
 
   return (
-    <section className="py-24 sm:py-32 px-6">
+    <section className="py-16 sm:py-24 md:py-32 px-6">
       <div className="max-w-6xl mx-auto">
         <SectionReveal>
           <div className="flex items-center gap-4 mb-4">

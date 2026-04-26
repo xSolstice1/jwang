@@ -9,7 +9,7 @@ import StrokeText from "./StrokeText";
 
 export default function About() {
   return (
-    <section id="about" className="py-24 sm:py-32 px-6">
+    <section id="about" className="py-16 sm:py-24 md:py-32 px-6">
       <div className="max-w-5xl mx-auto">
         <SectionReveal>
           <div className="flex items-center gap-4 mb-16">

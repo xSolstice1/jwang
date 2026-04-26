@@ -26,6 +26,7 @@ export default function LightSpears() {
 
   useEffect(() => {
     if (!mounted) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -334,12 +335,13 @@ export default function LightSpears() {
   return (
     <canvas
       ref={canvasRef}
+      aria-hidden="true"
       style={{
         position: "fixed",
         top: 0,
         left: 0,
-        width: "100vw",
-        height: "100vh",
+        width: "100%",
+        height: "100%",
         zIndex: 45,
         pointerEvents: "none",
         opacity: 0.6,

@@ -7,7 +7,7 @@ import StrokeText from "./StrokeText";
 
 export default function Contact() {
   return (
-    <section id="contact" className="py-24 sm:py-32 px-6">
+    <section id="contact" className="py-16 sm:py-24 md:py-32 px-6">
       <div className="max-w-2xl mx-auto text-center">
         <SectionReveal>
           <div className="flex items-center justify-center gap-4 mb-16">
@@ -46,7 +46,7 @@ export default function Contact() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-14">
             <a
               href={`mailto:${profile.email}`}
-              className="group relative px-10 py-4 text-sm font-mono tracking-wide overflow-hidden"
+              className="group relative px-6 sm:px-10 py-4 text-sm font-mono tracking-wide overflow-hidden"
               style={{
                 color: "var(--bg)",
                 background: "var(--accent)",
@@ -59,7 +59,7 @@ export default function Contact() {
               href={profile.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-10 py-4 text-sm font-medium tracking-wide uppercase border transition-all duration-300"
+              className="px-6 sm:px-10 py-4 text-sm font-medium tracking-wide uppercase border transition-all duration-300"
               style={{
                 color: "var(--text-secondary)",
                 borderColor: "var(--border-color)",
@@ -79,7 +79,7 @@ export default function Contact() {
               href={profile.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-10 py-4 text-sm font-medium tracking-wide uppercase border transition-all duration-300"
+              className="px-6 sm:px-10 py-4 text-sm font-medium tracking-wide uppercase border transition-all duration-300"
               style={{
                 color: "var(--text-secondary)",
                 borderColor: "var(--border-color)",

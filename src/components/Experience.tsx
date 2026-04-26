@@ -11,7 +11,7 @@ export default function Experience() {
   const [expanded, setExpanded] = useState<number>(0);
 
   return (
-    <section id="experience" className="py-24 sm:py-32 px-6">
+    <section id="experience" className="py-16 sm:py-24 md:py-32 px-6">
       <div className="max-w-5xl mx-auto">
         <SectionReveal>
           <div className="flex items-center gap-4 mb-16">

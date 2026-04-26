@@ -12,6 +12,7 @@ import SystemThinking from "@/components/SystemThinking";
 import Education from "@/components/Education";
 import Skills from "@/components/Skills";
 import Contact from "@/components/Contact";
+
 import Footer from "@/components/Footer";
 
 const AnimatedBackground = dynamic(
@@ -55,7 +56,7 @@ export default function Home() {
         initial={{ opacity: 0 }}
         animate={{ opacity: loaded ? 1 : 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="relative min-h-screen"
+        className="relative min-h-screen overflow-x-hidden"
       >
         <AnimatedBackground />
 
@@ -71,7 +72,12 @@ export default function Home() {
         <SmoothScroll>
           <main className="relative z-10">
             <Hero />
-            <Divider />
+            <div
+              className="relative h-32 -mt-16 pointer-events-none"
+              style={{
+                background: "linear-gradient(to bottom, transparent, var(--bg) 70%)",
+              }}
+            />
             <About />
             <Divider />
             <Experience />

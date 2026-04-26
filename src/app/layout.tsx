@@ -25,6 +25,22 @@ export const metadata: Metadata = {
     "Python",
     "Singapore",
   ],
+  openGraph: {
+    title: "Ang Jin Wei — Data Engineer & AI Systems Builder",
+    description:
+      "Data Engineer and AI Systems Builder based in Singapore. Building scalable data systems, knowledge graphs, and AI pipelines.",
+    url: "https://xsolstice1.github.io/jwang",
+    siteName: "Ang Jin Wei Portfolio",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ang Jin Wei — Data Engineer & AI Systems Builder",
+    description:
+      "Data Engineer and AI Systems Builder based in Singapore. Building scalable data systems, knowledge graphs, and AI pipelines.",
+  },
+  metadataBase: new URL("https://xsolstice1.github.io"),
 };
 
 export default function RootLayout({
@@ -35,9 +51,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased overflow-x-hidden`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col overflow-x-hidden">{children}</body>
     </html>
   );
 }

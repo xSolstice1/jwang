@@ -34,6 +34,74 @@ export interface PipelineNode {
 
 export const projects: Project[] = [
   {
+    id: "flapworld",
+    title: "FlapWorld",
+    company: "Personal Project",
+    problem:
+      "Wanted to build a full-stack game from scratch — a virtual pet collection and idle game with real-time multiplayer, economy systems, and cross-platform support.",
+    architecture:
+      "Next.js 16 frontend with React 19, Firebase for auth and real-time Firestore sync, Zustand for client state management, canvas-based bird rendering pipeline, and Electron for desktop builds. Modular architecture with separate game modules for each minigame.",
+    impact: [
+      "Built end-to-end: auth, real-time data sync, game economy, PvP, leaderboards",
+      "Canvas rendering pipeline for dynamic bird customization (paintbrushes, auras, accessories)",
+      "Cross-platform: web (Vercel) + desktop (Electron with NSIS installer)",
+      "Designed progression systems: battle pass, daily logins, explorable zones, missions",
+    ],
+    techStack: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Firebase",
+      "Zustand",
+      "Tailwind CSS",
+      "Electron",
+      "Canvas API",
+    ],
+    screenshots: [
+      "/jwang/screenshots/flapworld-1.png",
+      "/jwang/screenshots/flapworld-2.png",
+      "/jwang/screenshots/flapworld-3.png",
+    ],
+    pipeline: [
+      {
+        id: "client",
+        label: "Next.js Client",
+        type: "source",
+        details: "React 19 frontend with modular game views and Tailwind UI",
+      },
+      {
+        id: "state",
+        label: "Zustand Stores",
+        type: "process",
+        details: "Client state for player data, inventory, battles, auras — synced with Firestore listeners",
+      },
+      {
+        id: "firebase",
+        label: "Firebase",
+        type: "storage",
+        details: "Auth + Firestore for real-time data persistence and user management",
+      },
+      {
+        id: "renderer",
+        label: "Canvas Renderer",
+        type: "process",
+        details: "Layered bird rendering: base sprite, paintbrush effects, auras, accessories",
+      },
+      {
+        id: "games",
+        label: "Game Modules",
+        type: "process",
+        details: "Flap Dash, Seed Harvest, Explore Zones — each with stat-driven mechanics",
+      },
+      {
+        id: "electron",
+        label: "Electron Desktop",
+        type: "output",
+        details: "Cross-platform desktop app wrapping Next.js standalone build",
+      },
+    ],
+  },
+  {
     id: "graphrag",
     title: "Game Knowledge GraphRAG Service",
     company: "Razer AI Software BU",
@@ -204,74 +272,6 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "flapworld",
-    title: "FlapWorld",
-    company: "Personal Project",
-    problem:
-      "Wanted to build a full-stack game from scratch — a virtual pet collection and idle game with real-time multiplayer, economy systems, and cross-platform support.",
-    architecture:
-      "Next.js 16 frontend with React 19, Firebase for auth and real-time Firestore sync, Zustand for client state management, canvas-based bird rendering pipeline, and Electron for desktop builds. Modular architecture with separate game modules for each minigame.",
-    impact: [
-      "Built end-to-end: auth, real-time data sync, game economy, PvP, leaderboards",
-      "Canvas rendering pipeline for dynamic bird customization (paintbrushes, auras, accessories)",
-      "Cross-platform: web (Vercel) + desktop (Electron with NSIS installer)",
-      "Designed progression systems: battle pass, daily logins, explorable zones, missions",
-    ],
-    techStack: [
-      "Next.js",
-      "React",
-      "TypeScript",
-      "Firebase",
-      "Zustand",
-      "Tailwind CSS",
-      "Electron",
-      "Canvas API",
-    ],
-    screenshots: [
-      "/jwang/screenshots/flapworld-1.png",
-      "/jwang/screenshots/flapworld-2.png",
-      "/jwang/screenshots/flapworld-3.png",
-    ],
-    pipeline: [
-      {
-        id: "client",
-        label: "Next.js Client",
-        type: "source",
-        details: "React 19 frontend with modular game views and Tailwind UI",
-      },
-      {
-        id: "state",
-        label: "Zustand Stores",
-        type: "process",
-        details: "Client state for player data, inventory, battles, auras — synced with Firestore listeners",
-      },
-      {
-        id: "firebase",
-        label: "Firebase",
-        type: "storage",
-        details: "Auth + Firestore for real-time data persistence and user management",
-      },
-      {
-        id: "renderer",
-        label: "Canvas Renderer",
-        type: "process",
-        details: "Layered bird rendering: base sprite, paintbrush effects, auras, accessories",
-      },
-      {
-        id: "games",
-        label: "Game Modules",
-        type: "process",
-        details: "Flap Dash, Seed Harvest, Explore Zones — each with stat-driven mechanics",
-      },
-      {
-        id: "electron",
-        label: "Electron Desktop",
-        type: "output",
-        details: "Cross-platform desktop app wrapping Next.js standalone build",
-      },
-    ],
-  },
-  {
     id: "curriculum-organizer",
     title: "Curriculum Info Organizer",
     company: "University Project",
@@ -411,37 +411,83 @@ export const experiences: Experience[] = [
   },
 ];
 
+export interface Skill {
+  name: string;
+  proficiency: "core" | "proficient" | "familiar";
+}
+
 export interface SkillCategory {
   name: string;
   color: string;
-  skills: string[];
+  skills: Skill[];
 }
 
 export const skillCategories: SkillCategory[] = [
   {
     name: "Languages & Frameworks",
     color: "neon-blue",
-    skills: ["Python", "TypeScript", "SQL", "Go", "C#", "C++", "Java", "JavaScript"],
+    skills: [
+      { name: "Python", proficiency: "core" },
+      { name: "TypeScript", proficiency: "core" },
+      { name: "SQL", proficiency: "core" },
+      { name: "Go", proficiency: "proficient" },
+      { name: "C#", proficiency: "proficient" },
+      { name: "C++", proficiency: "familiar" },
+      { name: "Java", proficiency: "familiar" },
+      { name: "JavaScript", proficiency: "core" },
+    ],
   },
   {
     name: "Data & AI",
     color: "neon-purple",
-    skills: ["Neo4j", "Snowflake", "MongoDB", "GraphRAG", "AWS Bedrock", "dbt", "Vector Search"],
+    skills: [
+      { name: "Neo4j", proficiency: "core" },
+      { name: "Snowflake", proficiency: "core" },
+      { name: "MongoDB", proficiency: "proficient" },
+      { name: "GraphRAG", proficiency: "core" },
+      { name: "AWS Bedrock", proficiency: "proficient" },
+      { name: "dbt", proficiency: "proficient" },
+      { name: "Vector Search", proficiency: "proficient" },
+    ],
   },
   {
     name: "Frontend & Web",
     color: "neon-green",
-    skills: ["React", "Next.js", "Tailwind CSS", "Chakra UI", "FastAPI", ".NET", "Electron"],
+    skills: [
+      { name: "React", proficiency: "core" },
+      { name: "Next.js", proficiency: "core" },
+      { name: "Tailwind CSS", proficiency: "core" },
+      { name: "Chakra UI", proficiency: "proficient" },
+      { name: "FastAPI", proficiency: "core" },
+      { name: ".NET", proficiency: "proficient" },
+      { name: "Electron", proficiency: "familiar" },
+    ],
   },
   {
     name: "Cloud & Infra",
     color: "neon-purple",
-    skills: ["AWS", "Terraform", "Docker", "ECR", "S3", "RDS", "AWS Batch", "Firebase"],
+    skills: [
+      { name: "AWS", proficiency: "core" },
+      { name: "Terraform", proficiency: "core" },
+      { name: "Docker", proficiency: "core" },
+      { name: "ECR", proficiency: "proficient" },
+      { name: "S3", proficiency: "proficient" },
+      { name: "RDS", proficiency: "proficient" },
+      { name: "AWS Batch", proficiency: "proficient" },
+      { name: "Firebase", proficiency: "proficient" },
+    ],
   },
   {
     name: "Tools & Platforms",
     color: "neon-blue",
-    skills: ["Git", "Tableau", "Airflow", "Zustand", "Linux", "CI/CD"],
+    skills: [
+      { name: "Git", proficiency: "core" },
+      { name: "Tableau", proficiency: "proficient" },
+      { name: "Airflow", proficiency: "proficient" },
+      { name: "Zustand", proficiency: "proficient" },
+      { name: "Linux", proficiency: "proficient" },
+      { name: "CI/CD", proficiency: "proficient" },
+    ],
   },
 ];
 
