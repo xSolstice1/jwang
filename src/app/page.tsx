@@ -56,7 +56,7 @@ export default function Home() {
         initial={{ opacity: 0 }}
         animate={{ opacity: loaded ? 1 : 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="relative min-h-screen overflow-x-hidden"
+        className="relative min-h-screen overflow-x-clip"
       >
         <AnimatedBackground />
 

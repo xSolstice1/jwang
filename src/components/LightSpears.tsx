@@ -336,16 +336,8 @@ export default function LightSpears() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        zIndex: 45,
-        pointerEvents: "none",
-        opacity: 0.6,
-      }}
+      className="fixed inset-0 pointer-events-none z-[45]"
+      style={{ opacity: 0.6 }}
     />
   );
 }
