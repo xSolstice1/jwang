@@ -10,9 +10,7 @@ import Experience from "@/components/Experience";
 import Projects from "@/components/Projects";
 import SystemThinking from "@/components/SystemThinking";
 import Education from "@/components/Education";
-import Skills from "@/components/Skills";
 import Contact from "@/components/Contact";
-
 import Footer from "@/components/Footer";
 
 const AnimatedBackground = dynamic(
@@ -78,38 +76,34 @@ export default function Home() {
                 background: "linear-gradient(to bottom, transparent, var(--bg) 70%)",
               }}
             />
-            <About />
-            <Divider />
-            <Experience />
-            <Divider />
-            <Projects />
-            <Divider />
-            <SystemThinking />
-            <Divider />
-            <Education />
-            <Divider />
-            <Skills />
-            <Divider />
-            <Contact />
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-24">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
+                <div className="md:col-span-2 lg:col-span-2 bento-card">
+                  <About />
+                </div>
+                <div className="md:col-span-1 bento-card">
+                  <SystemThinking />
+                </div>
+                <div className="md:col-span-1 lg:col-span-2 bento-card">
+                  <Experience />
+                </div>
+                <div className="md:col-span-1 lg:col-span-1 bento-card">
+                  <Education />
+                </div>
+                <div className="md:col-span-2 lg:col-span-3 bento-card">
+                  <Projects />
+                </div>
+                <div className="md:col-span-2 lg:col-span-3 bento-card">
+                  <Contact />
+                </div>
+              </div>
+            </div>
           </main>
 
           <Footer />
         </SmoothScroll>
       </motion.div>
     </>
-  );
-}
-
-function Divider() {
-  return (
-    <div className="max-w-6xl mx-auto px-6">
-      <div
-        className="h-px"
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, var(--border-color), transparent)",
-        }}
-      />
-    </div>
   );
 }

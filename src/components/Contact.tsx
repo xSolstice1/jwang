@@ -2,38 +2,26 @@
 
 import { profile } from "@/data/portfolio";
 import SectionReveal from "./SectionReveal";
-import ScrollParallax from "./ScrollParallax";
-import StrokeText from "./StrokeText";
 
 export default function Contact() {
   return (
-    <section id="contact" className="py-16 sm:py-24 md:py-32 px-6">
+    <section id="contact" className="p-6 sm:p-8">
       <div className="max-w-2xl mx-auto text-center">
         <SectionReveal>
-          <div className="flex items-center justify-center gap-4 mb-16">
-            <div
-              className="flex-1 h-px max-w-[80px]"
-              style={{ background: "var(--border-color)" }}
-            />
-            <ScrollParallax speed={-0.15}>
-              <span
-                className="font-mono text-xs tracking-widest"
-                style={{ color: "var(--accent)" }}
-              >
-                06
-              </span>
-            </ScrollParallax>
-            <StrokeText text="Contact" className="text-2xl sm:text-3xl font-bold" />
-            <div
-              className="flex-1 h-px max-w-[80px]"
-              style={{ background: "var(--border-color)" }}
-            />
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <span
+              className="font-mono text-[10px] tracking-widest"
+              style={{ color: "var(--accent)" }}
+            >
+              05
+            </span>
+            <h2 className="text-lg font-bold text-white tracking-tight">Contact</h2>
           </div>
         </SectionReveal>
 
         <SectionReveal delay={0.1}>
           <p
-            className="text-base leading-relaxed mb-10"
+            className="text-sm leading-relaxed mb-8"
             style={{ color: "var(--text-secondary)" }}
           >
             Open to opportunities in Data Engineering, AI Infrastructure,
@@ -43,10 +31,10 @@ export default function Contact() {
         </SectionReveal>
 
         <SectionReveal delay={0.2}>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-14">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
             <a
               href={`mailto:${profile.email}`}
-              className="group relative px-6 sm:px-10 py-4 text-sm font-mono tracking-wide overflow-hidden"
+              className="group relative px-6 py-3 text-sm font-mono tracking-wide overflow-hidden"
               style={{
                 color: "var(--bg)",
                 background: "var(--accent)",
@@ -59,7 +47,7 @@ export default function Contact() {
               href={profile.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 sm:px-10 py-4 text-sm font-medium tracking-wide uppercase border transition-all duration-300"
+              className="px-6 py-3 text-sm font-medium tracking-wide uppercase border transition-all duration-300"
               style={{
                 color: "var(--text-secondary)",
                 borderColor: "var(--border-color)",
@@ -79,7 +67,7 @@ export default function Contact() {
               href={profile.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 sm:px-10 py-4 text-sm font-medium tracking-wide uppercase border transition-all duration-300"
+              className="px-6 py-3 text-sm font-medium tracking-wide uppercase border transition-all duration-300"
               style={{
                 color: "var(--text-secondary)",
                 borderColor: "var(--border-color)",
@@ -99,8 +87,8 @@ export default function Contact() {
         </SectionReveal>
 
         <SectionReveal delay={0.3}>
-          <div className="card rounded-xl p-7 font-mono text-xs text-left max-w-md mx-auto">
-            <div className="mb-3" style={{ color: "var(--text-muted)" }}>
+          <div className="card rounded-lg p-5 font-mono text-xs text-left max-w-sm mx-auto">
+            <div className="mb-2" style={{ color: "var(--text-muted)" }}>
               // open to
             </div>
             <div className="space-y-1">

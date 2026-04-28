@@ -32,8 +32,8 @@ export default function AnimatedBackground() {
         mouseX, mouseY, 0,
         mouseX, mouseY, canvas.width * 0.6
       );
-      grd.addColorStop(0, "rgba(100, 255, 218, 0.03)");
-      grd.addColorStop(0.5, "rgba(199, 146, 234, 0.015)");
+      grd.addColorStop(0, "rgba(124, 58, 237, 0.03)");
+      grd.addColorStop(0.5, "rgba(236, 72, 153, 0.015)");
       grd.addColorStop(1, "transparent");
       ctx.fillStyle = grd;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -43,7 +43,7 @@ export default function AnimatedBackground() {
         const x = canvas.width * (0.3 + i * 0.2) + Math.sin(t + i * 2) * 100;
         const y = canvas.height * (0.3 + i * 0.15) + Math.cos(t + i * 1.5) * 80;
         const grd2 = ctx.createRadialGradient(x, y, 0, x, y, 300);
-        grd2.addColorStop(0, `rgba(100, 255, 218, ${0.015 - i * 0.003})`);
+        grd2.addColorStop(0, `rgba(124, 58, 237, ${0.015 - i * 0.003})`);
         grd2.addColorStop(1, "transparent");
         ctx.fillStyle = grd2;
         ctx.fillRect(0, 0, canvas.width, canvas.height);

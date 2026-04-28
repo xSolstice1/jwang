@@ -354,8 +354,8 @@ function LiveCodeEditor() {
     <div
       className="rounded-lg overflow-hidden flex flex-col"
       style={{
-        background: "rgba(7, 11, 20, 0.85)",
-        border: "1px solid rgba(100, 255, 218, 0.08)",
+        background: "rgba(5, 5, 7, 0.85)",
+        border: "1px solid rgba(124, 58, 237, 0.1)",
         backdropFilter: "blur(10px)",
         height: "480px",
       }}
@@ -377,7 +377,7 @@ function LiveCodeEditor() {
             className="px-3 py-1 text-[10px] font-mono transition-all duration-200"
             style={{
               color: activeFile === name ? "var(--accent)" : "var(--text-muted)",
-              background: activeFile === name ? "rgba(100,255,218,0.06)" : "transparent",
+              background: activeFile === name ? "rgba(239,68,68,0.06)" : "transparent",
               borderBottom: activeFile === name ? "1px solid var(--accent)" : "1px solid transparent",
             }}
           >
@@ -530,7 +530,7 @@ function HeroParticles() {
         if (p.y < 0) p.y = h;
         if (p.y > h) p.y = 0;
 
-        const [r, g, b] = p.hue === 0 ? [100, 255, 218] : [199, 146, 234];
+        const [r, g, b] = p.hue === 0 ? [124, 58, 237] : [236, 72, 153];
 
         const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
         glow.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${p.alpha * 0.3})`);
@@ -663,7 +663,7 @@ export default function Hero() {
           width: "min(600px, 80vw)",
           height: "min(600px, 80vw)",
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(100,255,218,0.1) 0%, rgba(199,146,234,0.05) 40%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(239,68,68,0.1) 0%, rgba(124,58,237,0.05) 40%, transparent 70%)",
           opacity: 0,
           transition: "opacity 0.4s ease",
           zIndex: 1,
@@ -707,7 +707,7 @@ export default function Hero() {
                 height: "2px",
                 width: "120px",
                 background: "linear-gradient(90deg, var(--accent), var(--purple), transparent)",
-                boxShadow: "0 0 12px rgba(100, 255, 218, 0.4)",
+                boxShadow: "0 0 12px rgba(124, 58, 237, 0.4)",
               }}
             />
 
@@ -775,7 +775,7 @@ export default function Hero() {
                 className="lg:hidden px-6 py-3.5 text-sm font-mono tracking-wide uppercase border transition-colors duration-300 text-center"
                 style={{
                   color: "var(--accent)",
-                  borderColor: "rgba(100, 255, 218, 0.3)",
+                  borderColor: "rgba(124, 58, 237, 0.3)",
                 }}
               >
                 &gt;_ View Code

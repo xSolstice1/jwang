@@ -88,7 +88,7 @@ export default function HelixCanvas() {
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = `rgba(100, 255, 218, ${alpha})`;
+        ctx.strokeStyle = `rgba(124, 58, 237, ${alpha})`;
         ctx.lineWidth = 0.5;
         ctx.stroke();
       }
@@ -123,8 +123,8 @@ export default function HelixCanvas() {
         }
       };
 
-      drawStrand(s1, 100, 255, 218);
-      drawStrand(s2, 199, 146, 234);
+      drawStrand(s1, 124, 58, 237);
+      drawStrand(s2, 236, 72, 153);
 
       // Glow nodes at rung intersections
       const allPts = [
@@ -137,7 +137,7 @@ export default function HelixCanvas() {
         if (depth < 0.4) continue;
         const r = 0.8 + depth * 2;
         const alpha = (depth - 0.4) * 0.5;
-        const [cr, cg, cb] = p.strand === 1 ? [100, 255, 218] : [199, 146, 234];
+        const [cr, cg, cb] = p.strand === 1 ? [124, 58, 237] : [236, 72, 153];
 
         // Soft glow
         const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 4);

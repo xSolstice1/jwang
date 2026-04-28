@@ -12,7 +12,7 @@ const typeColors: Record<
   process: { accent: "var(--purple)", label: "process" },
   storage: { accent: "var(--green)", label: "storage" },
   api: { accent: "var(--accent)", label: "api" },
-  output: { accent: "#ffcb6b", label: "output" },
+  output: { accent: "#f87171", label: "output" },
 };
 
 const typeIcons: Record<PipelineNode["type"], string> = {

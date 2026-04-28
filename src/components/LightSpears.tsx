@@ -264,8 +264,8 @@ export default function LightSpears() {
         const alpha = fadeIn * fadeOut * 0.7;
 
         const [r, g, b] = s.hue === 0
-          ? [100, 255, 218]
-          : [199, 146, 234];
+          ? [124, 58, 237]
+          : [236, 72, 153];
 
         // Glow
         const grad = ctx.createLinearGradient(tailX, tailY, s.x, s.y);

@@ -48,7 +48,7 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
           exit={{ opacity: 0, y: -30 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="fixed inset-0 z-[100] flex items-center justify-center"
-          style={{ background: "#050505" }}
+          style={{ background: "#050507" }}
         >
           <div className="w-full max-w-lg px-8">
             <div className="font-mono text-xs leading-relaxed mb-8 space-y-1">
