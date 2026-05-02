@@ -6,6 +6,7 @@ import Image from "next/image";
 import { projects } from "@/data/portfolio";
 import PipelineFlow from "./PipelineFlow";
 import SectionReveal from "./SectionReveal";
+import { useXP } from "./XPEngine";
 
 function isIOS() {
   if (typeof navigator === "undefined") return false;
@@ -103,6 +104,8 @@ export default function Projects() {
   } | null>(null);
   const [activeCategory, setActiveCategory] = useState(0);
   const tilt = useTilt();
+  const { addMilestone } = useXP();
+  const viewedProjects = useRef<Set<string>>(new Set([projects[0].id]));
 
   const closeLightbox = useCallback(() => setLightbox(null), []);
 
@@ -134,7 +137,7 @@ export default function Projects() {
             className="font-mono text-[10px] tracking-widest"
             style={{ color: "var(--accent)" }}
           >
-            03
+            05
           </span>
           <h2 className="text-lg font-bold text-white tracking-tight">Projects</h2>
         </div>
@@ -167,7 +170,16 @@ export default function Projects() {
           {filteredProjects.map((project) => (
             <button
               key={project.id}
-              onClick={() => setActiveProject(project.id)}
+              onClick={() => {
+                  setActiveProject(project.id);
+                  if (!viewedProjects.current.has(project.id)) {
+                    viewedProjects.current.add(project.id);
+                    addMilestone(`proj-${project.id}`, `Studied: ${project.title}`, 10);
+                  }
+                  if (viewedProjects.current.size === projects.length) {
+                    addMilestone("proj-all", "Master Engineer", 25);
+                  }
+                }}
               className="px-4 py-2 text-xs font-mono uppercase tracking-wider transition-all duration-300"
               style={{
                 color:

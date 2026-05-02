@@ -232,6 +232,60 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
+/* CRT flicker */
+@keyframes crt-flicker {
+  0% { opacity: 0.02; }
+  5% { opacity: 0.06; }
+  10% { opacity: 0.02; }
+  15% { opacity: 0.08; }
+  20% { opacity: 0.02; }
+  100% { opacity: 0.02; }
+}
+
+.crt-flicker {
+  animation: crt-flicker 0.12s infinite;
+}
+
+.crt-hard-flicker {
+  filter: brightness(1.15) contrast(1.1);
+}
+
+/* CRT rolling scanline bar */
+@keyframes crt-roll {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.crt-rolling-bar {
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, rgba(124,58,237,0.06), rgba(255,255,255,0.03), transparent);
+  animation: crt-roll 4s linear infinite;
+}
+
+/* Glitch mode (easter egg) */
+@keyframes glitch-skew {
+  0% { transform: skew(0deg); }
+  20% { transform: skew(-2deg); }
+  40% { transform: skew(0.5deg); }
+  60% { transform: skew(-0.5deg); }
+  80% { transform: skew(1deg); }
+  100% { transform: skew(0deg); }
+}
+
+html.glitch-mode body {
+  animation: glitch-skew 0.2s infinite;
+}
+
+html.glitch-mode .bento-card {
+  animation: glitch-skew 0.3s infinite;
+  border-color: rgba(236, 72, 153, 0.3) !important;
+}
+
+/* Glitch text layers */
+.glitch-active {
+  animation: glitch-skew 0.1s infinite;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

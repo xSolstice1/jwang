@@ -13,7 +13,7 @@ export default function Contact() {
               className="font-mono text-[10px] tracking-widest"
               style={{ color: "var(--accent)" }}
             >
-              05
+              06
             </span>
             <h2 className="text-lg font-bold text-white tracking-tight">Contact</h2>
           </div>

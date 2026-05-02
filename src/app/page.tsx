@@ -3,6 +3,8 @@
 import { useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import dynamic from "next/dynamic";
+import { SoundProvider } from "@/components/SoundEngine";
+import { XPProvider } from "@/components/XPEngine";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
@@ -12,6 +14,7 @@ import SystemThinking from "@/components/SystemThinking";
 import Education from "@/components/Education";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import MagneticCard from "@/components/MagneticCard";
 
 const AnimatedBackground = dynamic(
   () => import("@/components/AnimatedBackground"),
@@ -33,77 +36,95 @@ const GrainOverlay = dynamic(() => import("@/components/GrainOverlay"), {
 const LightSpears = dynamic(() => import("@/components/LightSpears"), {
   ssr: false,
 });
+const CRTOverlay = dynamic(() => import("@/components/CRTOverlay"), {
+  ssr: false,
+});
+const EasterEggs = dynamic(() => import("@/components/EasterEggs"), {
+  ssr: false,
+});
 
 export default function Home() {
   const [terminalOpen, setTerminalOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [crtMode, setCrtMode] = useState(false);
 
   const onLoadComplete = useCallback(() => setLoaded(true), []);
 
   return (
-    <>
-      <CustomCursor />
-      <GrainOverlay />
-      <LightSpears />
-
-      <AnimatePresence>
-        {!loaded && <LoadingScreen onComplete={onLoadComplete} />}
-      </AnimatePresence>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: loaded ? 1 : 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="relative min-h-screen overflow-x-clip"
-      >
-        <AnimatedBackground />
-
-        <Navbar
-          terminalOpen={terminalOpen}
-          onToggleTerminal={() => setTerminalOpen(!terminalOpen)}
-        />
+    <SoundProvider>
+      <XPProvider>
+        <CustomCursor />
+        <GrainOverlay />
+        <LightSpears />
+        <CRTOverlay active={crtMode} />
+        <EasterEggs />
 
         <AnimatePresence>
-          {terminalOpen && <Terminal onClose={() => setTerminalOpen(false)} />}
+          {!loaded && <LoadingScreen onComplete={onLoadComplete} />}
         </AnimatePresence>
 
-        <SmoothScroll>
-          <main className="relative z-10">
-            <Hero />
-            <div
-              className="relative h-32 -mt-16 pointer-events-none"
-              style={{
-                background: "linear-gradient(to bottom, transparent, var(--bg) 70%)",
-              }}
-            />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: loaded ? 1 : 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="relative min-h-screen overflow-x-clip"
+        >
+          <AnimatedBackground />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-24">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
-                <div className="md:col-span-2 lg:col-span-2 bento-card">
-                  <About />
+          <Navbar
+            terminalOpen={terminalOpen}
+            onToggleTerminal={() => setTerminalOpen(!terminalOpen)}
+            crtMode={crtMode}
+            onToggleCRT={() => setCrtMode(!crtMode)}
+          />
+
+          <AnimatePresence>
+            {terminalOpen && <Terminal onClose={() => setTerminalOpen(false)} />}
+          </AnimatePresence>
+
+          <SmoothScroll>
+            <main className="relative z-10">
+              <Hero />
+              <div
+                className="relative h-32 -mt-16 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(to bottom, transparent, var(--bg) 70%)",
+                }}
+              />
+
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-24 space-y-5">
+                <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-5">
+                  <MagneticCard className="bento-card" intensity={4}>
+                    <About />
+                  </MagneticCard>
+                  <MagneticCard className="bento-card" intensity={6}>
+                    <SystemThinking />
+                  </MagneticCard>
                 </div>
-                <div className="md:col-span-1 bento-card">
-                  <SystemThinking />
-                </div>
-                <div className="md:col-span-1 lg:col-span-2 bento-card">
+
+                <MagneticCard className="bento-card" intensity={3}>
                   <Experience />
-                </div>
-                <div className="md:col-span-1 lg:col-span-1 bento-card">
-                  <Education />
-                </div>
-                <div className="md:col-span-2 lg:col-span-3 bento-card">
-                  <Projects />
-                </div>
-                <div className="md:col-span-2 lg:col-span-3 bento-card">
-                  <Contact />
-                </div>
-              </div>
-            </div>
-          </main>
+                </MagneticCard>
 
-          <Footer />
-        </SmoothScroll>
-      </motion.div>
-    </>
+                <MagneticCard className="bento-card" intensity={4}>
+                  <Education />
+                </MagneticCard>
+
+                <MagneticCard className="bento-card" intensity={2}>
+                  <Projects />
+                </MagneticCard>
+
+                <MagneticCard className="bento-card" intensity={4}>
+                  <Contact />
+                </MagneticCard>
+              </div>
+            </main>
+
+            <Footer />
+          </SmoothScroll>
+        </motion.div>
+      </XPProvider>
+    </SoundProvider>
   );
 }

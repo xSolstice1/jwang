@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { experiences } from "@/data/portfolio";
 import SectionReveal from "./SectionReveal";
+import { useXP } from "./XPEngine";
 
 export default function Experience() {
   const [expanded, setExpanded] = useState<number>(0);
+  const { addMilestone } = useXP();
+  const viewed = useRef<Set<number>>(new Set([0]));
 
   return (
     <section id="experience" className="p-6 sm:p-8">
@@ -16,7 +19,7 @@ export default function Experience() {
             className="font-mono text-[10px] tracking-widest"
             style={{ color: "var(--accent)" }}
           >
-            02
+            03
           </span>
           <h2 className="text-lg font-bold text-white tracking-tight">Experience</h2>
         </div>
@@ -48,7 +51,16 @@ export default function Experience() {
               />
 
               <button
-                onClick={() => setExpanded(expanded === i ? -1 : i)}
+                onClick={() => {
+                  setExpanded(expanded === i ? -1 : i);
+                  if (!viewed.current.has(i)) {
+                    viewed.current.add(i);
+                    addMilestone(`exp-${i}`, `Read: ${exp.company}`, 8);
+                  }
+                  if (viewed.current.size === experiences.length) {
+                    addMilestone("exp-all", "Read All Experience", 15);
+                  }
+                }}
                 className="w-full text-left group"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-1">

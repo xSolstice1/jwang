@@ -14,9 +14,11 @@ const navItems = [
 interface NavbarProps {
   terminalOpen: boolean;
   onToggleTerminal: () => void;
+  crtMode?: boolean;
+  onToggleCRT?: () => void;
 }
 
-export default function Navbar({ terminalOpen, onToggleTerminal }: NavbarProps) {
+export default function Navbar({ terminalOpen, onToggleTerminal, crtMode, onToggleCRT }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
@@ -82,6 +84,7 @@ export default function Navbar({ terminalOpen, onToggleTerminal }: NavbarProps) 
         <div className="flex items-center justify-between h-16">
           <a
             href="#"
+            data-logo
             className="font-mono text-xs font-bold tracking-wider transition-colors duration-300"
             style={{ color: "var(--accent)" }}
           >
@@ -117,12 +120,25 @@ export default function Navbar({ terminalOpen, onToggleTerminal }: NavbarProps) 
                 </a>
               );
             })}
+            {onToggleCRT && (
+              <button
+                onClick={onToggleCRT}
+                className="ml-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest border transition-all duration-300"
+                style={{
+                  color: crtMode ? "var(--bg)" : "var(--purple)",
+                  borderColor: crtMode ? "var(--purple)" : "rgba(236,72,153,0.3)",
+                  background: crtMode ? "var(--purple)" : "transparent",
+                }}
+              >
+                CRT
+              </button>
+            )}
             <button
               onClick={onToggleTerminal}
-              className="ml-4 px-4 py-1.5 font-mono text-[10px] uppercase tracking-widest border transition-all duration-300"
+              className="ml-2 px-4 py-1.5 font-mono text-[10px] uppercase tracking-widest border transition-all duration-300"
               style={{
                 color: terminalOpen ? "var(--bg)" : "var(--accent)",
-                borderColor: terminalOpen ? "var(--accent)" : "rgba(100,255,218,0.3)",
+                borderColor: terminalOpen ? "var(--accent)" : "rgba(124,58,237,0.3)",
                 background: terminalOpen ? "var(--accent)" : "transparent",
               }}
             >
@@ -186,6 +202,18 @@ export default function Navbar({ terminalOpen, onToggleTerminal }: NavbarProps) 
               >
                 {terminalOpen ? "close terminal" : ">_ open terminal"}
               </button>
+              {onToggleCRT && (
+                <button
+                  onClick={() => {
+                    onToggleCRT();
+                    setMobileOpen(false);
+                  }}
+                  className="block w-full text-left py-3 font-mono text-xs uppercase tracking-widest transition-colors duration-300"
+                  style={{ color: crtMode ? "var(--purple)" : "var(--text-secondary)" }}
+                >
+                  {crtMode ? "CRT mode: ON" : "CRT mode: OFF"}
+                </button>
+              )}
             </div>
           </motion.div>
         )}

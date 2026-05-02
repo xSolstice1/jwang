@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { skillCategories } from "@/data/portfolio";
 import SectionReveal from "./SectionReveal";
-import ScrollParallax from "./ScrollParallax";
 import StrokeText from "./StrokeText";
 
 const colorMap: Record<string, { text: string; accent: string }> = {
@@ -24,14 +23,12 @@ export default function Skills() {
       <div className="max-w-6xl mx-auto">
         <SectionReveal>
           <div className="flex items-center gap-4 mb-4">
-            <ScrollParallax speed={-0.15}>
-              <span
-                className="font-mono text-xs tracking-widest"
-                style={{ color: "var(--accent)" }}
-              >
-                05
-              </span>
-            </ScrollParallax>
+            <span
+              className="font-mono text-xs tracking-widest"
+              style={{ color: "var(--accent)" }}
+            >
+              05
+            </span>
             <StrokeText text="Skills" className="text-2xl sm:text-3xl font-bold" />
             <div
               className="flex-1 h-px"

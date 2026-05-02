@@ -39,7 +39,7 @@ export default function SystemThinking() {
             className="font-mono text-[10px] tracking-widest"
             style={{ color: "var(--purple)" }}
           >
-            sys
+            02
           </span>
           <h2 className="text-lg font-bold text-white tracking-tight">System Thinking</h2>
         </div>
