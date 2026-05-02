@@ -47,8 +47,13 @@ export default function Home() {
   const [terminalOpen, setTerminalOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [crtMode, setCrtMode] = useState(false);
+  const [gameKey, setGameKey] = useState(0);
 
   const onLoadComplete = useCallback(() => setLoaded(true), []);
+  const replayGame = useCallback(() => {
+    setLoaded(false);
+    setGameKey(k => k + 1);
+  }, []);
 
   return (
     <SoundProvider>
@@ -60,7 +65,7 @@ export default function Home() {
         <EasterEggs />
 
         <AnimatePresence>
-          {!loaded && <LoadingScreen onComplete={onLoadComplete} />}
+          {!loaded && <LoadingScreen key={gameKey} onComplete={onLoadComplete} />}
         </AnimatePresence>
 
         <motion.div
@@ -123,6 +128,20 @@ export default function Home() {
 
             <Footer />
           </SmoothScroll>
+
+          {/* Floating replay button — fixed top-left under navbar */}
+          <button
+            onClick={replayGame}
+            className="fixed top-[72px] left-3 z-30 font-mono text-[10px] px-3 py-1.5 rounded cursor-pointer tracking-wider uppercase transition-all duration-300 hover:scale-105"
+            style={{
+              background: "rgba(5,5,7,0.7)",
+              border: "1px solid rgba(124,58,237,0.15)",
+              color: "var(--text-muted)",
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            ⚔ Replay Gatekeeper
+          </button>
         </motion.div>
       </XPProvider>
     </SoundProvider>
