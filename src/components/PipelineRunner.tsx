@@ -14,9 +14,9 @@ interface TechItem {
 }
 
 const TECH_ITEMS: TechItem[] = [
-  { label: "PY", icon: "\u{1F40D}", color: "var(--accent)", points: 10 },
+  { label: "PY", icon: "\u{1F40D}", color: "var(--gold)", points: 10 },
   { label: "TS", icon: "\u{2328}", color: "var(--blue)", points: 10 },
-  { label: "AWS", icon: "\u{2601}", color: "#f59e0b", points: 15 },
+  { label: "AWS", icon: "\u{2601}", color: "var(--gold)", points: 15 },
   { label: "Neo4j", icon: "\u{25C9}", color: "var(--green)", points: 15 },
   { label: "Docker", icon: "\u{1F40B}", color: "#06b6d4", points: 10 },
   { label: "SQL", icon: "\u{229E}", color: "var(--purple)", points: 10 },
@@ -25,8 +25,8 @@ const TECH_ITEMS: TechItem[] = [
 ];
 
 const BUG_ITEMS: TechItem[] = [
-  { label: "BUG", icon: "\u{1F41B}", color: "#ef4444", points: -20, isBug: true },
-  { label: "404", icon: "\u{26A0}", color: "#ef4444", points: -15, isBug: true },
+  { label: "BUG", icon: "\u{1F41B}", color: "var(--ember)", points: -20, isBug: true },
+  { label: "404", icon: "\u{26A0}", color: "var(--ember)", points: -15, isBug: true },
 ];
 
 interface FallingItemData {
@@ -90,7 +90,6 @@ export default function PipelineRunner() {
     setBestScore(prev => Math.max(prev, finalScore));
   }, [addXP, addMilestone]);
 
-  // Spawn items
   useEffect(() => {
     if (status !== "playing") return;
 
@@ -111,14 +110,12 @@ export default function PipelineRunner() {
     return () => { if (spawnTimer.current) clearTimeout(spawnTimer.current); };
   }, [status, spawnInterval]);
 
-  // Game clock
   useEffect(() => {
     if (status !== "playing") return;
     clockTimer.current = setInterval(() => setElapsed(e => e + 1), 1000);
     return () => { if (clockTimer.current) clearInterval(clockTimer.current); };
   }, [status]);
 
-  // Check missed items
   useEffect(() => {
     if (status !== "playing") return;
 
@@ -140,7 +137,7 @@ export default function PipelineRunner() {
           setLives(l => {
             const newLives = Math.max(0, l - missed);
             if (newLives <= 0) {
-              setScore(s => { endGame(s); return s; });
+              setScore(s => { queueMicrotask(() => endGame(s)); return s; });
             }
             return newLives;
           });
@@ -178,33 +175,34 @@ export default function PipelineRunner() {
 
   return (
     <div
-      className="rounded-lg overflow-hidden flex flex-col select-none"
+      className="overflow-hidden flex flex-col select-none"
       style={{
-        background: "rgba(5, 5, 7, 0.85)",
-        border: "1px solid rgba(124, 58, 237, 0.1)",
+        background: "rgba(10, 0, 21, 0.9)",
+        border: "2px solid rgba(124, 58, 237, 0.15)",
         backdropFilter: "blur(10px)",
         height: "100%",
         minHeight: "300px",
       }}
     >
-      {/* Header */}
       <div
         className="px-4 py-2.5 flex items-center justify-between shrink-0"
-        style={{ background: "rgba(255,255,255,0.02)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+        style={{ background: "rgba(124,58,237,0.04)", borderBottom: "2px solid rgba(124,58,237,0.1)" }}
       >
-        <span className="font-mono text-xs font-bold tracking-widest" style={{ color: "var(--accent)" }}>
-          PIPELINE RUNNER
+        <span className="font-pixel text-[7px] tracking-widest" style={{ color: "var(--gold)" }}>
+          {"◆ PIPELINE RUNNER"}
         </span>
         {status === "playing" && (
-          <div className="flex items-center gap-3 font-mono text-[10px]">
+          <div className="flex items-center gap-3 font-pixel text-[6px]">
             <span style={{ color: "var(--text-secondary)" }}>{score}</span>
             <div className="flex gap-0.5">
               {Array.from({ length: MAX_LIVES }).map((_, i) => (
                 <span
                   key={i}
-                  className="w-1.5 h-1.5 rounded-full transition-colors duration-300"
-                  style={{ background: i < lives ? "var(--purple)" : "rgba(255,255,255,0.1)" }}
-                />
+                  className="transition-colors duration-300"
+                  style={{ color: i < lives ? "var(--ember)" : "rgba(255,255,255,0.1)" }}
+                >
+                  ♥
+                </span>
               ))}
             </div>
             {combo >= 3 && (
@@ -212,7 +210,7 @@ export default function PipelineRunner() {
                 key={combo}
                 initial={{ scale: 1.5 }}
                 animate={{ scale: 1 }}
-                style={{ color: "var(--purple)" }}
+                style={{ color: "var(--gold)" }}
               >
                 x{Math.floor(combo / 3) + 1}
               </motion.span>
@@ -221,28 +219,29 @@ export default function PipelineRunner() {
         )}
       </div>
 
-      {/* Game board */}
       <div
         ref={boardRef}
         className="flex-1 relative overflow-hidden"
         style={{ minHeight: "250px" }}
       >
-        {/* Pipeline lanes (decorative) */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           {[20, 40, 60, 80].map(x => (
             <div
               key={x}
               className="absolute top-0 bottom-0 w-px"
-              style={{ left: `${x}%`, background: "rgba(124,58,237,0.04)" }}
+              style={{ left: `${x}%`, background: "rgba(124,58,237,0.06)" }}
             />
           ))}
           <div
             className="absolute bottom-0 left-0 right-0 h-12"
-            style={{ background: "linear-gradient(to top, rgba(124,58,237,0.05), transparent)" }}
+            style={{ background: "linear-gradient(to top, rgba(239,68,68,0.06), transparent)" }}
+          />
+          <div
+            className="absolute bottom-0 left-0 right-0 h-px"
+            style={{ background: "rgba(124,58,237,0.15)" }}
           />
         </div>
 
-        {/* Idle state */}
         {status === "idle" && (
           <motion.div
             className="absolute inset-0 flex flex-col items-center justify-center gap-4 cursor-pointer z-10"
@@ -267,20 +266,19 @@ export default function PipelineRunner() {
             <motion.div
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="font-mono text-xs uppercase tracking-widest"
-              style={{ color: "var(--accent)" }}
+              className="font-pixel text-[7px] uppercase tracking-widest"
+              style={{ color: "var(--gold)" }}
             >
-              tap to start
+              {"▸ TAP TO START ◂"}
             </motion.div>
             {bestScore > 0 && (
-              <div className="font-mono text-xs" style={{ color: "var(--text-muted)" }}>
-                best: {bestScore}
+              <div className="font-pixel text-[6px]" style={{ color: "var(--text-muted)" }}>
+                BEST: {bestScore}
               </div>
             )}
           </motion.div>
         )}
 
-        {/* Falling items */}
         <AnimatePresence>
           {items.map(item => (
             <motion.button
@@ -299,21 +297,24 @@ export default function PipelineRunner() {
               }
               onClick={() => catchItem(item.id)}
               onTouchEnd={(e) => { e.preventDefault(); catchItem(item.id); }}
-              className="absolute flex flex-col items-center justify-center rounded-lg cursor-pointer"
+              className="absolute flex flex-col items-center justify-center cursor-pointer"
               style={{
                 left: `${item.x}%`,
                 width: "48px",
                 height: "48px",
                 background: item.tech.isBug
-                  ? "rgba(239,68,68,0.15)"
-                  : "rgba(124,58,237,0.1)",
-                border: `1px solid ${item.tech.isBug ? "rgba(239,68,68,0.3)" : "rgba(124,58,237,0.2)"}`,
+                  ? "rgba(239,68,68,0.12)"
+                  : "rgba(124,58,237,0.08)",
+                border: `2px solid ${item.tech.isBug ? "rgba(239,68,68,0.3)" : "rgba(124,58,237,0.2)"}`,
+                boxShadow: item.tech.isBug
+                  ? "0 0 8px rgba(239,68,68,0.15)"
+                  : "0 0 8px rgba(124,58,237,0.1)",
                 zIndex: 5,
               }}
             >
               <span className="text-lg leading-none">{item.tech.icon}</span>
               <span
-                className="font-mono text-[10px] font-bold mt-0.5"
+                className="font-pixel text-[5px] mt-0.5"
                 style={{ color: item.tech.color }}
               >
                 {item.tech.label}
@@ -322,7 +323,6 @@ export default function PipelineRunner() {
           ))}
         </AnimatePresence>
 
-        {/* Game over */}
         <AnimatePresence>
           {status === "over" && (
             <motion.div
@@ -330,23 +330,23 @@ export default function PipelineRunner() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3"
-              style={{ background: "rgba(5,5,7,0.9)", backdropFilter: "blur(8px)" }}
+              style={{ background: "rgba(10,0,21,0.92)", backdropFilter: "blur(8px)" }}
             >
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-                className="font-mono text-xs uppercase tracking-widest"
-                style={{ color: "var(--text-muted)" }}
+                className="font-pixel text-[7px] uppercase tracking-widest"
+                style={{ color: "var(--ember)" }}
               >
-                Pipeline Terminated
+                PIPELINE TERMINATED
               </motion.div>
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 150, delay: 0.4 }}
-                className="text-3xl font-bold font-mono"
-                style={{ color: "var(--accent)" }}
+                className="font-pixel text-xl"
+                style={{ color: "var(--gold)" }}
               >
                 {score}
               </motion.div>
@@ -354,20 +354,20 @@ export default function PipelineRunner() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6 }}
-                className="font-mono text-xs"
-                style={{ color: "var(--purple)" }}
+                className="font-pixel text-[6px]"
+                style={{ color: "var(--accent)" }}
               >
-                +{Math.max(5, Math.floor(score / 10))} XP earned
+                +{Math.max(5, Math.floor(score / 10))} XP
               </motion.div>
               {score >= bestScore && score > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 }}
-                  className="font-mono text-[9px] font-bold"
-                  style={{ color: "#f59e0b" }}
+                  className="font-pixel text-[6px]"
+                  style={{ color: "var(--gold)" }}
                 >
-                  NEW BEST!
+                  {"★ NEW BEST ★"}
                 </motion.div>
               )}
               <motion.button
@@ -375,16 +375,16 @@ export default function PipelineRunner() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1 }}
                 onClick={startGame}
-                className="mt-2 px-5 py-2 rounded-md font-mono text-xs uppercase tracking-wide transition-all duration-200"
+                className="mt-2 px-5 py-2 font-pixel text-[6px] uppercase tracking-wide transition-all duration-200"
                 style={{
-                  background: "rgba(124,58,237,0.15)",
-                  border: "1px solid rgba(124,58,237,0.3)",
+                  background: "rgba(124,58,237,0.1)",
+                  border: "2px solid rgba(124,58,237,0.25)",
                   color: "var(--accent)",
                 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                Play Again
+                {"▸ PLAY AGAIN"}
               </motion.button>
             </motion.div>
           )}

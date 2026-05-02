@@ -15,6 +15,7 @@ import Education from "@/components/Education";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import MagneticCard from "@/components/MagneticCard";
+import SkillTree from "@/components/SkillTree";
 
 const AnimatedBackground = dynamic(
   () => import("@/components/AnimatedBackground"),
@@ -42,6 +43,14 @@ const CRTOverlay = dynamic(() => import("@/components/CRTOverlay"), {
 const EasterEggs = dynamic(() => import("@/components/EasterEggs"), {
   ssr: false,
 });
+
+function PixelDivider({ symbol = "◆ ◆ ◆" }: { symbol?: string }) {
+  return (
+    <div className="pixel-divider my-2">
+      {symbol}
+    </div>
+  );
+}
 
 export default function Home() {
   const [terminalOpen, setTerminalOpen] = useState(false);
@@ -108,17 +117,31 @@ export default function Home() {
                   </MagneticCard>
                 </div>
 
+                <PixelDivider />
+
                 <MagneticCard className="bento-card" intensity={3}>
                   <Experience />
                 </MagneticCard>
+
+                <PixelDivider symbol="⚔ ◆ ⚔" />
+
+                <MagneticCard className="bento-card" intensity={3}>
+                  <SkillTree />
+                </MagneticCard>
+
+                <PixelDivider />
 
                 <MagneticCard className="bento-card" intensity={4}>
                   <Education />
                 </MagneticCard>
 
+                <PixelDivider />
+
                 <MagneticCard className="bento-card" intensity={2}>
                   <Projects />
                 </MagneticCard>
+
+                <PixelDivider symbol="◆ ◆ ◆ ◆ ◆" />
 
                 <MagneticCard className="bento-card" intensity={4}>
                   <Contact />
@@ -129,18 +152,17 @@ export default function Home() {
             <Footer />
           </SmoothScroll>
 
-          {/* Floating replay button — fixed top-left under navbar */}
           <button
             onClick={replayGame}
-            className="fixed top-[72px] left-3 z-30 font-mono text-[10px] px-3 py-1.5 rounded cursor-pointer tracking-wider uppercase transition-all duration-300 hover:scale-105"
+            className="fixed top-[72px] left-3 z-30 font-pixel text-[6px] px-3 py-1.5 cursor-pointer tracking-wider uppercase transition-all duration-300 hover:scale-105"
             style={{
-              background: "rgba(5,5,7,0.7)",
-              border: "1px solid rgba(124,58,237,0.15)",
+              background: "rgba(10,0,21,0.8)",
+              border: "1px solid rgba(124,58,237,0.2)",
               color: "var(--text-muted)",
               backdropFilter: "blur(8px)",
             }}
           >
-            ⚔ Replay Gatekeeper
+            {"⚔ REPLAY"}
           </button>
         </motion.div>
       </XPProvider>

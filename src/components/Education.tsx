@@ -57,12 +57,13 @@ export default function Education() {
       <SectionReveal>
         <div className="flex items-center gap-3 mb-6">
           <span
-            className="font-mono text-[10px] tracking-widest"
-            style={{ color: "var(--accent)" }}
+            className="font-pixel text-[7px] tracking-widest"
+            style={{ color: "var(--gold)" }}
           >
-            04
+            ◆
           </span>
-          <h2 className="text-lg font-bold text-white tracking-tight">Education</h2>
+          <h2 className="font-pixel text-[10px] sm:text-xs text-white tracking-wider">TRAINING GROUNDS</h2>
+          <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, var(--border-color), transparent)" }} />
         </div>
       </SectionReveal>
 
@@ -71,7 +72,7 @@ export default function Education() {
           const isExpanded = expanded === i;
           return (
             <SectionReveal key={edu.school} delay={i * 0.1}>
-              <div className="card rounded-lg p-5">
+              <div className="card p-5">
                 <button
                   onClick={() => setExpanded(isExpanded ? null : i)}
                   className="w-full text-left"
@@ -84,7 +85,7 @@ export default function Education() {
                       <div className="flex items-center gap-2 flex-wrap">
                         {edu.detail && (
                           <span
-                            className="text-[9px] font-mono uppercase tracking-widest"
+                            className="font-pixel text-[6px] uppercase tracking-widest"
                             style={{ color: "var(--purple)" }}
                           >
                             {edu.detail}
@@ -92,7 +93,7 @@ export default function Education() {
                         )}
                         {edu.gpa && (
                           <span
-                            className="text-[9px] font-mono"
+                            className="font-pixel text-[6px]"
                             style={{ color: "var(--green)" }}
                           >
                             GPA: {edu.gpa}
@@ -125,7 +126,7 @@ export default function Education() {
                       {edu.school}
                     </span>
                     <span
-                      className="font-mono text-[10px]"
+                      className="font-pixel text-[6px]"
                       style={{ color: "var(--text-muted)" }}
                     >
                       {edu.year}
@@ -161,8 +162,8 @@ export default function Education() {
                           ([category, items]) => (
                             <div key={category}>
                               <h4
-                                className="text-[9px] font-medium uppercase tracking-[0.2em] mb-2"
-                                style={{ color: "var(--text-muted)" }}
+                                className="font-pixel text-[6px] uppercase tracking-[0.2em] mb-2"
+                                style={{ color: "var(--gold)" }}
                               >
                                 {category}
                               </h4>
@@ -170,10 +171,10 @@ export default function Education() {
                                 {items.map((item: string) => (
                                   <span
                                     key={item}
-                                    className="px-2 py-0.5 text-[9px] font-mono rounded"
+                                    className="px-2 py-0.5 text-[9px] font-mono"
                                     style={{
                                       color: "var(--text-secondary)",
-                                      background: "var(--surface)",
+                                      background: "rgba(124, 58, 237, 0.06)",
                                       border:
                                         "1px solid var(--border-color)",
                                     }}

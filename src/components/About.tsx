@@ -11,12 +11,13 @@ export default function About() {
       <SectionReveal>
         <div className="flex items-center gap-3 mb-6">
           <span
-            className="font-mono text-[10px] tracking-widest"
-            style={{ color: "var(--accent)" }}
+            className="font-pixel text-[7px] tracking-widest"
+            style={{ color: "var(--gold)" }}
           >
-            01
+            ◆
           </span>
-          <h2 className="text-lg font-bold text-white tracking-tight">About</h2>
+          <h2 className="font-pixel text-[10px] sm:text-xs text-white tracking-wider">ORIGIN STORY</h2>
+          <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, var(--border-color), transparent)" }} />
         </div>
       </SectionReveal>
 
@@ -33,12 +34,16 @@ export default function About() {
 
         <SectionReveal delay={0.2} clip>
           <motion.div
-            className="card rounded-xl p-5 h-fit"
+            className="card rounded-sm p-5 h-fit"
             whileHover={{ y: -3 }}
             transition={{ duration: 0.3 }}
+            style={{ border: "1px solid rgba(124, 58, 237, 0.15)" }}
           >
             <div className="font-mono text-xs space-y-2.5">
-              <div style={{ color: "var(--text-muted)" }}>// config.ts</div>
+              <div style={{ color: "var(--text-muted)" }}>
+                <span className="font-pixel text-[6px]" style={{ color: "var(--gold)" }}>{"// "}</span>
+                <span className="font-pixel text-[6px]" style={{ color: "var(--text-muted)" }}>config.ts</span>
+              </div>
               <div>
                 <span style={{ color: "var(--purple)" }}>const</span>{" "}
                 <span className="text-white">engineer</span>{" "}

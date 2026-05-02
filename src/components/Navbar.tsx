@@ -75,9 +75,9 @@ export default function Navbar({ terminalOpen, onToggleTerminal, crtMode, onTogg
       transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
       style={{
-        background: scrolled ? "rgba(7, 11, 20, 0.85)" : "transparent",
+        background: scrolled ? "rgba(10, 0, 21, 0.9)" : "transparent",
         backdropFilter: scrolled ? "blur(20px)" : "none",
-        borderBottom: scrolled ? "1px solid var(--border-color)" : "1px solid transparent",
+        borderBottom: scrolled ? "2px solid rgba(124, 58, 237, 0.15)" : "2px solid transparent",
       }}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -85,17 +85,17 @@ export default function Navbar({ terminalOpen, onToggleTerminal, crtMode, onTogg
           <a
             href="#"
             data-logo
-            className="font-mono text-xs font-bold tracking-wider transition-colors duration-300"
-            style={{ color: "var(--accent)" }}
+            className="font-pixel text-[8px] tracking-wider transition-colors duration-300"
+            style={{ color: "var(--gold)" }}
           >
-            AJW
+            {"◆ AJW ◆"}
           </a>
 
           <div className="hidden md:flex items-center gap-1 relative">
             <div
               ref={indicatorRef}
               className="absolute bottom-0 h-[2px] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
-              style={{ background: "var(--accent)", opacity: 0 }}
+              style={{ background: "var(--gold)", opacity: 0 }}
             />
             {navItems.map((item) => {
               const sectionId = item.href.replace("#", "");
@@ -107,15 +107,16 @@ export default function Navbar({ terminalOpen, onToggleTerminal, crtMode, onTogg
                   ref={(el) => {
                     if (el) navLinksRef.current.set(sectionId, el);
                   }}
-                  className="px-4 py-2 text-xs uppercase tracking-widest transition-colors duration-300"
-                  style={{ color: isActive ? "var(--accent)" : "var(--text-muted)" }}
+                  className="px-4 py-2 font-pixel text-[7px] uppercase tracking-widest transition-colors duration-300"
+                  style={{ color: isActive ? "var(--gold)" : "var(--text-muted)" }}
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.color = "var(--text-primary)")
                   }
                   onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = isActive ? "var(--accent)" : "var(--text-muted)")
+                    (e.currentTarget.style.color = isActive ? "var(--gold)" : "var(--text-muted)")
                   }
                 >
+                  {isActive && <span className="mr-1" style={{ color: "var(--accent)" }}>{"▸"}</span>}
                   {item.label}
                 </a>
               );
@@ -123,7 +124,7 @@ export default function Navbar({ terminalOpen, onToggleTerminal, crtMode, onTogg
             {onToggleCRT && (
               <button
                 onClick={onToggleCRT}
-                className="ml-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest border transition-all duration-300"
+                className="ml-2 px-3 py-1.5 font-pixel text-[7px] uppercase tracking-widest border transition-all duration-300"
                 style={{
                   color: crtMode ? "var(--bg)" : "var(--purple)",
                   borderColor: crtMode ? "var(--purple)" : "rgba(236,72,153,0.3)",
@@ -135,7 +136,7 @@ export default function Navbar({ terminalOpen, onToggleTerminal, crtMode, onTogg
             )}
             <button
               onClick={onToggleTerminal}
-              className="ml-2 px-4 py-1.5 font-mono text-[10px] uppercase tracking-widest border transition-all duration-300"
+              className="ml-2 px-4 py-1.5 font-pixel text-[7px] uppercase tracking-widest border transition-all duration-300"
               style={{
                 color: terminalOpen ? "var(--bg)" : "var(--accent)",
                 borderColor: terminalOpen ? "var(--accent)" : "rgba(124,58,237,0.3)",
@@ -171,9 +172,9 @@ export default function Navbar({ terminalOpen, onToggleTerminal, crtMode, onTogg
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="md:hidden overflow-hidden"
             style={{
-              background: "rgba(7, 11, 20, 0.95)",
+              background: "rgba(10, 0, 21, 0.95)",
               backdropFilter: "blur(20px)",
-              borderTop: "1px solid var(--border-color)",
+              borderTop: "2px solid rgba(124, 58, 237, 0.15)",
             }}
           >
             <div className="px-6 py-4 space-y-1">
@@ -184,10 +185,10 @@ export default function Navbar({ terminalOpen, onToggleTerminal, crtMode, onTogg
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className="block py-3 text-xs uppercase tracking-widest transition-colors duration-300"
-                    style={{ color: isActive ? "var(--accent)" : "var(--text-secondary)" }}
+                    className="block py-3 font-pixel text-[7px] uppercase tracking-widest transition-colors duration-300"
+                    style={{ color: isActive ? "var(--gold)" : "var(--text-secondary)" }}
                   >
-                    {isActive && <span className="mr-2" style={{ color: "var(--accent)" }}>›</span>}
+                    {isActive && <span className="mr-2" style={{ color: "var(--accent)" }}>{"▸"}</span>}
                     {item.label}
                   </a>
                 );
@@ -197,7 +198,7 @@ export default function Navbar({ terminalOpen, onToggleTerminal, crtMode, onTogg
                   onToggleTerminal();
                   setMobileOpen(false);
                 }}
-                className="block w-full text-left py-3 font-mono text-xs uppercase tracking-widest transition-colors duration-300"
+                className="block w-full text-left py-3 font-pixel text-[7px] uppercase tracking-widest transition-colors duration-300"
                 style={{ color: "var(--accent)" }}
               >
                 {terminalOpen ? "close terminal" : ">_ open terminal"}
@@ -208,7 +209,7 @@ export default function Navbar({ terminalOpen, onToggleTerminal, crtMode, onTogg
                     onToggleCRT();
                     setMobileOpen(false);
                   }}
-                  className="block w-full text-left py-3 font-mono text-xs uppercase tracking-widest transition-colors duration-300"
+                  className="block w-full text-left py-3 font-pixel text-[7px] uppercase tracking-widest transition-colors duration-300"
                   style={{ color: crtMode ? "var(--purple)" : "var(--text-secondary)" }}
                 >
                   {crtMode ? "CRT mode: ON" : "CRT mode: OFF"}

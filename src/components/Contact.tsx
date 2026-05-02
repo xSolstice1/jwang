@@ -10,12 +10,18 @@ export default function Contact() {
         <SectionReveal>
           <div className="flex items-center justify-center gap-3 mb-6">
             <span
-              className="font-mono text-[10px] tracking-widest"
-              style={{ color: "var(--accent)" }}
+              className="font-pixel text-[7px] tracking-widest"
+              style={{ color: "var(--gold)" }}
             >
-              06
+              ◆
             </span>
-            <h2 className="text-lg font-bold text-white tracking-tight">Contact</h2>
+            <h2 className="font-pixel text-[10px] sm:text-xs text-white tracking-wider">SAVE POINT</h2>
+            <span
+              className="font-pixel text-[7px] tracking-widest"
+              style={{ color: "var(--gold)" }}
+            >
+              ◆
+            </span>
           </div>
         </SectionReveal>
 
@@ -34,7 +40,7 @@ export default function Contact() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
             <a
               href={`mailto:${profile.email}`}
-              className="group relative px-6 py-3 text-sm font-mono tracking-wide overflow-hidden"
+              className="group relative px-6 py-3 font-pixel text-[7px] tracking-wide overflow-hidden"
               style={{
                 color: "var(--bg)",
                 background: "var(--accent)",
@@ -47,14 +53,14 @@ export default function Contact() {
               href={profile.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 text-sm font-medium tracking-wide uppercase border transition-all duration-300"
+              className="px-6 py-3 font-pixel text-[7px] uppercase tracking-wide border transition-all duration-300"
               style={{
                 color: "var(--text-secondary)",
                 borderColor: "var(--border-color)",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = "var(--accent)";
-                e.currentTarget.style.color = "var(--accent)";
+                e.currentTarget.style.color = "var(--gold)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "var(--border-color)";
@@ -67,14 +73,14 @@ export default function Contact() {
               href={profile.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 text-sm font-medium tracking-wide uppercase border transition-all duration-300"
+              className="px-6 py-3 font-pixel text-[7px] uppercase tracking-wide border transition-all duration-300"
               style={{
                 color: "var(--text-secondary)",
                 borderColor: "var(--border-color)",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = "var(--accent)";
-                e.currentTarget.style.color = "var(--accent)";
+                e.currentTarget.style.color = "var(--gold)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "var(--border-color)";
@@ -87,9 +93,10 @@ export default function Contact() {
         </SectionReveal>
 
         <SectionReveal delay={0.3}>
-          <div className="card rounded-lg p-5 font-mono text-xs text-left max-w-sm mx-auto">
+          <div className="card p-5 font-mono text-xs text-left max-w-sm mx-auto" style={{ border: "1px solid rgba(124, 58, 237, 0.15)" }}>
             <div className="mb-2" style={{ color: "var(--text-muted)" }}>
-              // open to
+              <span className="font-pixel text-[6px]" style={{ color: "var(--gold)" }}>{"// "}</span>
+              <span className="font-pixel text-[6px]">open to</span>
             </div>
             <div className="space-y-1">
               <div>

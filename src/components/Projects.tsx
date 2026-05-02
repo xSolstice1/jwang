@@ -134,12 +134,13 @@ export default function Projects() {
       <SectionReveal>
         <div className="flex items-center gap-3 mb-6">
           <span
-            className="font-mono text-[10px] tracking-widest"
-            style={{ color: "var(--accent)" }}
+            className="font-pixel text-[7px] tracking-widest"
+            style={{ color: "var(--gold)" }}
           >
-            05
+            ◆
           </span>
-          <h2 className="text-lg font-bold text-white tracking-tight">Projects</h2>
+          <h2 className="font-pixel text-[10px] sm:text-xs text-white tracking-wider">THE FORGE</h2>
+          <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, var(--border-color), transparent)" }} />
         </div>
       </SectionReveal>
 
@@ -155,7 +156,7 @@ export default function Projects() {
                   setActiveProject(available[0].id);
                 }
               }}
-              className="px-3 py-1 text-[10px] font-mono uppercase tracking-wider rounded-full transition-all duration-300"
+              className="px-3 py-1 font-pixel text-[6px] uppercase tracking-wider transition-all duration-300"
               style={{
                 color: activeCategory === i ? "var(--bg)" : "var(--text-muted)",
                 background: activeCategory === i ? "var(--purple)" : "transparent",
@@ -180,7 +181,7 @@ export default function Projects() {
                     addMilestone("proj-all", "Master Engineer", 25);
                   }
                 }}
-              className="px-4 py-2 text-xs font-mono uppercase tracking-wider transition-all duration-300"
+              className="px-4 py-2 font-pixel text-[6px] uppercase tracking-wider transition-all duration-300"
               style={{
                 color:
                   activeProject === project.id
@@ -219,22 +220,22 @@ export default function Projects() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5, ease }}
-              className="rounded-xl overflow-hidden"
+              className="overflow-hidden"
               style={{
-                background: "rgba(255, 255, 255, 0.03)",
+                background: "rgba(124, 58, 237, 0.03)",
                 backdropFilter: "blur(12px)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
+                border: "2px solid rgba(124, 58, 237, 0.12)",
                 transition: "transform 0.15s ease-out, border-color 0.4s ease",
                 willChange: "transform",
               }}
             >
               <div className="p-6 sm:p-8" style={{ borderBottom: "1px solid var(--border-color)" }}>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-5">
-                  <h3 className="text-lg sm:text-xl font-bold text-white">
+                  <h3 className="font-pixel text-[9px] sm:text-[11px] text-white tracking-wider">
                     {project.title}
                   </h3>
                   <span
-                    className="font-mono text-[10px] uppercase tracking-widest mt-1 sm:mt-0"
+                    className="font-pixel text-[6px] uppercase tracking-widest mt-1 sm:mt-0"
                     style={{ color: "var(--text-muted)" }}
                   >
                     {project.company}
@@ -244,8 +245,8 @@ export default function Projects() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <h4
-                      className="text-[9px] font-medium uppercase tracking-[0.2em] mb-2"
-                      style={{ color: "var(--text-muted)" }}
+                      className="font-pixel text-[6px] uppercase tracking-[0.2em] mb-2"
+                      style={{ color: "var(--ember)" }}
                     >
                       Problem
                     </h4>
@@ -258,8 +259,8 @@ export default function Projects() {
                   </div>
                   <div>
                     <h4
-                      className="text-[9px] font-medium uppercase tracking-[0.2em] mb-2"
-                      style={{ color: "var(--text-muted)" }}
+                      className="font-pixel text-[6px] uppercase tracking-[0.2em] mb-2"
+                      style={{ color: "var(--ember)" }}
                     >
                       Architecture
                     </h4>
@@ -275,8 +276,8 @@ export default function Projects() {
 
               <div className="p-6 sm:p-8" style={{ borderBottom: "1px solid var(--border-color)" }}>
                 <h4
-                  className="text-[9px] font-medium uppercase tracking-[0.2em] mb-4"
-                  style={{ color: "var(--text-muted)" }}
+                  className="font-pixel text-[6px] uppercase tracking-[0.2em] mb-4"
+                  style={{ color: "var(--ember)" }}
                 >
                   Pipeline Architecture
                 </h4>
@@ -286,8 +287,8 @@ export default function Projects() {
               {project.screenshots && project.screenshots.length > 0 && (
                 <div className="p-6 sm:p-8" style={{ borderBottom: "1px solid var(--border-color)" }}>
                   <h4
-                    className="text-[9px] font-medium uppercase tracking-[0.2em] mb-4"
-                    style={{ color: "var(--text-muted)" }}
+                    className="font-pixel text-[6px] uppercase tracking-[0.2em] mb-4"
+                    style={{ color: "var(--ember)" }}
                   >
                     Screenshots
                   </h4>
@@ -302,9 +303,9 @@ export default function Projects() {
                             alt: `${project.title} screenshot ${i + 1}`,
                           })
                         }
-                        className="relative aspect-video rounded-lg overflow-hidden group"
+                        className="relative aspect-video overflow-hidden group"
                         style={{
-                          border: "1px solid var(--border-color)",
+                          border: "2px solid var(--border-color)",
                           background: "var(--surface)",
                         }}
                       >
@@ -339,8 +340,8 @@ export default function Projects() {
               <div className="p-6 sm:p-8 grid md:grid-cols-2 gap-6">
                 <div>
                   <h4
-                    className="text-[9px] font-medium uppercase tracking-[0.2em] mb-3"
-                    style={{ color: "var(--text-muted)" }}
+                    className="font-pixel text-[6px] uppercase tracking-[0.2em] mb-3"
+                    style={{ color: "var(--ember)" }}
                   >
                     Impact
                   </h4>
@@ -352,9 +353,11 @@ export default function Projects() {
                         style={{ color: "var(--text-secondary)" }}
                       >
                         <span
-                          className="mt-1.5 shrink-0 w-1 h-1 rounded-full"
-                          style={{ background: "var(--accent)" }}
-                        />
+                          className="mt-1.5 shrink-0 font-pixel text-[5px]"
+                          style={{ color: "var(--gold)" }}
+                        >
+                          ▸
+                        </span>
                         {item}
                       </li>
                     ))}
@@ -362,8 +365,8 @@ export default function Projects() {
                 </div>
                 <div>
                   <h4
-                    className="text-[9px] font-medium uppercase tracking-[0.2em] mb-3"
-                    style={{ color: "var(--text-muted)" }}
+                    className="font-pixel text-[6px] uppercase tracking-[0.2em] mb-3"
+                    style={{ color: "var(--ember)" }}
                   >
                     Tech Stack
                   </h4>
@@ -371,10 +374,10 @@ export default function Projects() {
                     {project.techStack.map((tech) => (
                       <span
                         key={tech}
-                        className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider rounded"
+                        className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider"
                         style={{
                           color: "var(--text-secondary)",
-                          background: "var(--surface)",
+                          background: "rgba(124, 58, 237, 0.06)",
                           border: "1px solid var(--border-color)",
                         }}
                       >
@@ -410,12 +413,13 @@ export default function Projects() {
               <img
                 src={lightbox.src}
                 alt={lightbox.alt}
-                className="max-w-full max-h-[90vh] rounded-lg object-contain"
+                className="max-w-full max-h-[90vh] object-contain"
+                style={{ border: "2px solid rgba(124, 58, 237, 0.2)" }}
               />
               <button
                 type="button"
                 onClick={closeLightbox}
-                className="absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center text-white transition-colors duration-300"
+                className="absolute top-3 right-3 w-10 h-10 flex items-center justify-center text-white transition-colors duration-300"
                 style={{
                   background: "rgba(0,0,0,0.6)",
                   border: "1px solid rgba(255,255,255,0.15)",

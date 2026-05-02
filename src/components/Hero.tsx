@@ -112,7 +112,7 @@ function HeroParticles() {
       ctx.clearRect(0, 0, w, h);
 
       for (let hue = 0; hue < 2; hue++) {
-        const [r, g, b] = hue === 0 ? [124, 58, 237] : [236, 72, 153];
+        const [r, g, b] = hue === 0 ? [124, 58, 237] : [239, 68, 68];
 
         ctx.beginPath();
         for (const p of particles) {
@@ -264,10 +264,10 @@ export default function Hero() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.3, ease }}
-              className="font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-6 sm:mb-8"
-              style={{ color: "var(--accent)" }}
+              className="font-pixel text-[7px] sm:text-[8px] tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-6 sm:mb-8"
+              style={{ color: "var(--gold)" }}
             >
-              <span className="opacity-50">&gt;_</span> portfolio.render()
+              {"◆"} portfolio.render()
             </motion.div>
 
             <motion.h1
@@ -288,7 +288,7 @@ export default function Hero() {
               style={{
                 height: "2px",
                 width: "120px",
-                background: "linear-gradient(90deg, var(--accent), var(--purple), transparent)",
+                background: "linear-gradient(90deg, var(--accent), var(--ember), transparent)",
                 boxShadow: "0 0 12px rgba(124, 58, 237, 0.4)",
               }}
             />
@@ -304,7 +304,7 @@ export default function Hero() {
                 style={{ color: "var(--text-secondary)" }}
               >
                 {displayed}
-                <span className="animate-blink" style={{ color: "var(--accent)" }}>|</span>
+                <span className="animate-blink" style={{ color: "var(--gold)" }}>|</span>
               </span>
             </motion.div>
 
@@ -326,7 +326,7 @@ export default function Hero() {
             >
               <MagneticButton
                 href="#projects"
-                className="group relative px-8 sm:px-10 py-3.5 sm:py-4 text-sm font-medium tracking-wide uppercase overflow-hidden text-center"
+                className="group relative px-8 sm:px-10 py-3.5 sm:py-4 font-pixel text-[7px] sm:text-[8px] tracking-wide uppercase overflow-hidden text-center"
                 style={{ color: "var(--bg)", background: "var(--accent)" }}
               >
                 <span className="relative z-10">View Projects</span>
@@ -334,14 +334,14 @@ export default function Hero() {
               </MagneticButton>
               <MagneticButton
                 href="#contact"
-                className="px-8 sm:px-10 py-3.5 sm:py-4 text-sm font-medium tracking-wide uppercase border transition-colors duration-300 text-center"
+                className="px-8 sm:px-10 py-3.5 sm:py-4 font-pixel text-[7px] sm:text-[8px] tracking-wide uppercase border transition-colors duration-300 text-center"
                 style={{
                   color: "var(--text-secondary)",
                   borderColor: "var(--border-color)",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "var(--accent)";
-                  e.currentTarget.style.color = "var(--accent)";
+                  e.currentTarget.style.borderColor = "var(--gold)";
+                  e.currentTarget.style.color = "var(--gold)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.borderColor = "var(--border-color)";
@@ -387,7 +387,7 @@ export default function Hero() {
               {[...techStack, ...techStack].map((t, i) => (
                 <span
                   key={i}
-                  className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.15em] sm:tracking-[0.25em] mx-3 sm:mx-6 whitespace-nowrap"
+                  className="font-pixel text-[5px] sm:text-[6px] uppercase tracking-[0.15em] sm:tracking-[0.25em] mx-3 sm:mx-6 whitespace-nowrap"
                   style={{ color: "var(--text-muted)" }}
                 >
                   {t}
@@ -405,7 +405,7 @@ export default function Hero() {
         className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
         <span
-          className="font-mono text-[9px] uppercase tracking-[0.2em] sm:hidden"
+          className="font-pixel text-[5px] uppercase tracking-[0.2em] sm:hidden"
           style={{ color: "var(--text-muted)" }}
         >
           scroll
@@ -417,7 +417,7 @@ export default function Hero() {
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
-            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--gold)")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
           >
             <path

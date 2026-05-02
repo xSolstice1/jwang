@@ -36,12 +36,12 @@ export default function SystemThinking() {
       <SectionReveal>
         <div className="flex items-center gap-3 mb-4">
           <span
-            className="font-mono text-[10px] tracking-widest"
-            style={{ color: "var(--purple)" }}
+            className="font-pixel text-[7px] tracking-widest"
+            style={{ color: "var(--gold)" }}
           >
-            02
+            ◆
           </span>
-          <h2 className="text-lg font-bold text-white tracking-tight">System Thinking</h2>
+          <h2 className="font-pixel text-[10px] sm:text-xs text-white tracking-wider">BATTLE TACTICS</h2>
         </div>
       </SectionReveal>
 
@@ -52,7 +52,7 @@ export default function SystemThinking() {
             <SectionReveal key={item.title} delay={i * 0.06}>
               <button
                 onClick={() => setExpanded(isExpanded ? null : i)}
-                className="w-full text-left card rounded-lg p-4 transition-all duration-400"
+                className="w-full text-left card p-4 transition-all duration-400"
                 style={{
                   borderColor: isExpanded
                     ? "rgba(124, 58, 237, 0.2)"
@@ -116,10 +116,10 @@ export default function SystemThinking() {
                             style={{ color: "var(--text-secondary)" }}
                           >
                             <span
-                              style={{ color: "var(--purple)" }}
-                              className="shrink-0"
+                              style={{ color: "var(--gold)" }}
+                              className="shrink-0 font-pixel text-[5px]"
                             >
-                              &rarr;
+                              ▸
                             </span>
                             {principle}
                           </motion.div>
