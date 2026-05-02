@@ -527,35 +527,35 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
     setPaused(pausedRef.current);
   }, []);
 
-  // Stable refs for input handlers — avoids effect re-runs breaking listeners
-  const doAttackRef = useRef(doAttack);
-  const doJumpRef = useRef(doJump);
-  const togglePauseRef = useRef(togglePause);
-  useEffect(() => { doAttackRef.current = doAttack; }, [doAttack]);
-  useEffect(() => { doJumpRef.current = doJump; }, [doJump]);
-  useEffect(() => { togglePauseRef.current = togglePause; }, [togglePause]);
-
+  // Keyboard input — direct registration, re-attaches when callbacks change
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" || e.key === "p" || e.key === "P") { e.preventDefault(); togglePauseRef.current(); return; }
+      if (e.key === "Escape" || e.key === "p" || e.key === "P") { e.preventDefault(); e.stopPropagation(); togglePause(); return; }
       if (pausedRef.current) return;
-      if (e.key === " " || e.key === "z" || e.key === "x" || e.key === "Z" || e.key === "X") { e.preventDefault(); doAttackRef.current(); }
-      if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") { e.preventDefault(); doJumpRef.current(); }
+      const k = e.key.toLowerCase();
+      if (k === " " || k === "z" || k === "x") { e.preventDefault(); e.stopPropagation(); doAttack(); }
+      if (k === "arrowup" || k === "w") { e.preventDefault(); e.stopPropagation(); doJump(); }
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+    window.addEventListener("keydown", onKey, true); // capture phase
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [doAttack, doJump, togglePause]);
 
   // Native touch listeners — must be { passive: false } to preventDefault
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
+    const isUI = (t: EventTarget | null) => {
+      const el2 = t as HTMLElement;
+      return el2?.closest?.("[data-skip]") || el2?.closest?.("[data-pause]") || el2?.tagName === "BUTTON";
+    };
     const onTouchStart = (e: TouchEvent) => {
+      if (isUI(e.target)) return; // let button handle it
       e.preventDefault();
       if (pausedRef.current) return;
       touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, time: Date.now() };
     };
     const onTouchEnd = (e: TouchEvent) => {
+      if (isUI(e.target)) return;
       e.preventDefault();
       if (pausedRef.current) return;
       const s = touchStartRef.current;
