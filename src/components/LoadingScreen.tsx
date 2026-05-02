@@ -302,6 +302,7 @@ interface Slash { x: number; y: number; time: number; }
 interface Prt { x: number; y: number; vx: number; vy: number; life: number; color: string; size: number; }
 
 export default function LoadingScreen({ onComplete }: { onComplete: () => void }) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [gameState, setGameState] = useState<GameState>("playing");
   const [showSkip, setShowSkip] = useState(false);
@@ -526,30 +527,50 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
     setPaused(pausedRef.current);
   }, []);
 
+  // Stable refs for input handlers — avoids effect re-runs breaking listeners
+  const doAttackRef = useRef(doAttack);
+  const doJumpRef = useRef(doJump);
+  const togglePauseRef = useRef(togglePause);
+  useEffect(() => { doAttackRef.current = doAttack; }, [doAttack]);
+  useEffect(() => { doJumpRef.current = doJump; }, [doJump]);
+  useEffect(() => { togglePauseRef.current = togglePause; }, [togglePause]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" || e.key === "p") { e.preventDefault(); togglePause(); return; }
+      if (e.key === "Escape" || e.key === "p" || e.key === "P") { e.preventDefault(); togglePauseRef.current(); return; }
       if (pausedRef.current) return;
-      if (e.key === " " || e.key === "z" || e.key === "x") { e.preventDefault(); doAttack(); }
-      if (e.key === "ArrowUp" || e.key === "w") { e.preventDefault(); doJump(); }
+      if (e.key === " " || e.key === "z" || e.key === "x" || e.key === "Z" || e.key === "X") { e.preventDefault(); doAttackRef.current(); }
+      if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") { e.preventDefault(); doJumpRef.current(); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [doAttack, doJump, togglePause]);
-
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    e.preventDefault();
-    if (pausedRef.current) return;
-    touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, time: Date.now() };
   }, []);
-  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    e.preventDefault();
-    if (pausedRef.current) return;
-    const s = touchStartRef.current;
-    if (!s) { doAttack(); return; }
-    if (e.changedTouches[0].clientY - s.y < -30 && Date.now() - s.time < 400) doJump(); else doAttack();
-    touchStartRef.current = null;
+
+  // Native touch listeners — must be { passive: false } to preventDefault
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onTouchStart = (e: TouchEvent) => {
+      e.preventDefault();
+      if (pausedRef.current) return;
+      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, time: Date.now() };
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      e.preventDefault();
+      if (pausedRef.current) return;
+      const s = touchStartRef.current;
+      if (!s) { doAttack(); return; }
+      if (e.changedTouches[0].clientY - s.y < -30 && Date.now() - s.time < 400) doJump(); else doAttack();
+      touchStartRef.current = null;
+    };
+    el.addEventListener("touchstart", onTouchStart, { passive: false });
+    el.addEventListener("touchend", onTouchEnd, { passive: false });
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
   }, [doAttack, doJump]);
+
   const handleClick = useCallback((e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest("[data-skip]") || (e.target as HTMLElement).closest("[data-pause]")) return;
     if (pausedRef.current) return;
@@ -1576,14 +1597,13 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
 
   return (
     <motion.div
+      ref={containerRef}
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, y: -30 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="fixed inset-0 z-[100] select-none overflow-hidden"
       style={{ background: "#050507", imageRendering: "pixelated", touchAction: "none", overscrollBehavior: "none" }}
       onClick={handleClick}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
     >
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ imageRendering: "pixelated" }} />
 
