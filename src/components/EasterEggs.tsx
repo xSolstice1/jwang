@@ -91,15 +91,20 @@ function EasterEggHints() {
   const shown = useRef<Set<string>>(new Set());
   const interactionCount = useRef(0);
   const hintTimer = useRef<NodeJS.Timeout>(undefined);
+  const hintActive = useRef(false);
 
   const showHint = useCallback((id: string, text: string) => {
     if (shown.current.has(id)) return;
-    if (hint) return;
+    if (hintActive.current) return;
     shown.current.add(id);
+    hintActive.current = true;
     setHint(text);
     if (hintTimer.current) clearTimeout(hintTimer.current);
-    hintTimer.current = setTimeout(() => setHint(null), 5000);
-  }, [hint]);
+    hintTimer.current = setTimeout(() => {
+      setHint(null);
+      hintActive.current = false;
+    }, 5000);
+  }, []);
 
   // Trigger hints based on section visibility (works with Lenis)
   useEffect(() => {
@@ -157,7 +162,7 @@ function EasterEggHints() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -50, opacity: 0 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed top-[68px] left-0 right-0 z-[45] flex items-center justify-center"
+          className="fixed top-16 left-0 right-0 z-[55] flex items-center justify-center"
         >
           <div
             className="w-full py-2.5 px-4 text-center font-mono text-xs sm:text-sm tracking-wide"
