@@ -33,7 +33,7 @@ export default function LightSpears() {
     if (!ctx) return;
 
     const isTouch = window.matchMedia("(pointer: coarse)").matches;
-    const MAX_SPEARS = isTouch ? 40 : 60;
+    const MAX_SPEARS = isTouch ? 25 : 40;
 
     let animId: number;
     let mouseX = window.innerWidth / 2;
@@ -47,7 +47,7 @@ export default function LightSpears() {
     const spears: Spear[] = [];
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio, 2);
+      const dpr = Math.min(window.devicePixelRatio, 1.5);
       const w = window.innerWidth;
       const h = window.innerHeight;
       canvas.style.width = w + "px";
@@ -85,7 +85,6 @@ export default function LightSpears() {
       }
     }
 
-    // --- Desktop: mouse ---
     const onMouse = (e: MouseEvent) => {
       prevMouseX = mouseX;
       prevMouseY = mouseY;
@@ -98,7 +97,6 @@ export default function LightSpears() {
         e.clientY < window.innerHeight - EDGE_MARGIN;
     };
 
-    // --- Mobile: touch ---
     const onTouchStart = (e: TouchEvent) => {
       touching = true;
       const t = e.touches[0];
@@ -106,7 +104,7 @@ export default function LightSpears() {
       mouseY = t.clientY;
       prevMouseX = mouseX;
       prevMouseY = mouseY;
-      spawnAt(mouseX, mouseY, 6 + Math.floor(Math.random() * 4), "burst");
+      spawnAt(mouseX, mouseY, 4 + Math.floor(Math.random() * 3), "burst");
     };
 
     const onTouchMove = (e: TouchEvent) => {
@@ -119,8 +117,8 @@ export default function LightSpears() {
       const dx = mouseX - prevMouseX;
       const dy = mouseY - prevMouseY;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist > 8) {
-        spawnAt(mouseX, mouseY, 1 + Math.floor(dist / 15), "trail");
+      if (dist > 12) {
+        spawnAt(mouseX, mouseY, 1, "trail");
       }
     };
 
@@ -167,12 +165,13 @@ export default function LightSpears() {
       });
     }
 
+    const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
+
     const draw = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
       ctx.clearRect(0, 0, w, h);
 
-      // Mouse speed (desktop)
       if (!isTouch) {
         const mdx = mouseX - prevMouseX;
         const mdy = mouseY - prevMouseY;
@@ -180,13 +179,12 @@ export default function LightSpears() {
         mouseSpeed += (currentSpeed - mouseSpeed) * 0.15;
 
         if (mouseActive && mouseSpeed > 3) {
-          const count = Math.min(Math.floor(mouseSpeed / 4), 4);
+          const count = Math.min(Math.floor(mouseSpeed / 5), 3);
           spawnAt(mouseX, mouseY, count, "burst");
         }
       }
 
-      // Ambient spears — both desktop and mobile
-      const ambientRate = isTouch ? 0.04 : 0.08;
+      const ambientRate = isTouch ? 0.03 : 0.06;
       if (Math.random() < ambientRate) {
         if (!isTouch || !touching) {
           spawnAmbient();
@@ -211,7 +209,6 @@ export default function LightSpears() {
         }
 
         if (s.phase === "home") {
-          const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
           const safeX = clamp(mouseX, EDGE_MARGIN * 2, w - EDGE_MARGIN * 2);
           const safeY = clamp(mouseY, EDGE_MARGIN * 2, h - EDGE_MARGIN * 2);
           const targetX = mouseActive ? safeX : w / 2;
@@ -237,7 +234,6 @@ export default function LightSpears() {
         }
 
         if (s.phase === "free") {
-          // Mobile: just decelerate and drift, no homing
           s.vx *= 0.98;
           s.vy *= 0.98;
         }
@@ -250,7 +246,6 @@ export default function LightSpears() {
           continue;
         }
 
-        // Render
         const vel = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
         if (vel < 0.01) continue;
 
@@ -267,39 +262,22 @@ export default function LightSpears() {
           ? [124, 58, 237]
           : [236, 72, 153];
 
-        // Glow
-        const grad = ctx.createLinearGradient(tailX, tailY, s.x, s.y);
-        grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
-        grad.addColorStop(0.6, `rgba(${r}, ${g}, ${b}, ${alpha * 0.3})`);
-        grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${alpha * 0.6})`);
-
+        // Single stroke with glow via lineWidth — no gradient allocation
         ctx.beginPath();
         ctx.moveTo(tailX, tailY);
         ctx.lineTo(s.x, s.y);
-        ctx.strokeStyle = grad;
+        ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 0.35})`;
         ctx.lineWidth = s.width * 3;
         ctx.lineCap = "round";
         ctx.stroke();
 
-        // Core
-        const coreGrad = ctx.createLinearGradient(tailX, tailY, s.x, s.y);
-        coreGrad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
-        coreGrad.addColorStop(0.5, `rgba(255, 255, 255, ${alpha * 0.4})`);
-        coreGrad.addColorStop(1, `rgba(255, 255, 255, ${alpha * 0.9})`);
-
         ctx.beginPath();
         ctx.moveTo(tailX, tailY);
         ctx.lineTo(s.x, s.y);
-        ctx.strokeStyle = coreGrad;
+        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
         ctx.lineWidth = s.width;
         ctx.lineCap = "round";
         ctx.stroke();
-
-        // Head
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.width * 1.2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
-        ctx.fill();
       }
 
       prevMouseX = mouseX;

@@ -5,14 +5,14 @@ import { useState, useEffect } from "react";
 
 const bootLines = [
   { text: "> initializing system...", delay: 0 },
-  { text: "> loading modules: react, next, framer-motion", delay: 300 },
-  { text: "> compiling portfolio.ts", delay: 600 },
-  { text: "> connecting to experience.db... OK", delay: 900 },
-  { text: "> mounting components", delay: 1200 },
-  { text: "> render pipeline ready", delay: 1500 },
-  { text: "", delay: 1700 },
-  { text: "> ANG JIN WEI — DATA ENGINEER & AI SYSTEMS BUILDER", delay: 1800 },
-  { text: "> system online.", delay: 2200 },
+  { text: "> loading modules: react, next, framer-motion", delay: 150 },
+  { text: "> compiling portfolio.ts", delay: 300 },
+  { text: "> connecting to experience.db... OK", delay: 450 },
+  { text: "> mounting components", delay: 600 },
+  { text: "> render pipeline ready", delay: 750 },
+  { text: "", delay: 850 },
+  { text: "> ANG JIN WEI — DATA ENGINEER & AI SYSTEMS BUILDER", delay: 900 },
+  { text: "> system online.", delay: 1100 },
 ];
 
 export default function LoadingScreen({ onComplete }: { onComplete: () => void }) {
@@ -33,8 +33,8 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
     });
 
     timers.push(
-      setTimeout(() => setExiting(true), 2800),
-      setTimeout(onComplete, 3400)
+      setTimeout(() => setExiting(true), 1400),
+      setTimeout(onComplete, 1800)
     );
 
     return () => timers.forEach(clearTimeout);

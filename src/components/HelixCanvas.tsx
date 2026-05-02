@@ -20,13 +20,13 @@ export default function HelixCanvas() {
     let targetMouseY = 0.5;
     let time = 0;
 
-    const POINTS = 120;
+    const POINTS = 80;
     const ROTATION_SPEED = 0.0015;
     const SCROLL_FACTOR = 0.003;
-    const RUNG_SKIP = 5;
+    const RUNG_SKIP = 6;
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio, 2);
+      const dpr = Math.min(window.devicePixelRatio, 1.5);
       canvas.width = canvas.offsetWidth * dpr;
       canvas.height = canvas.offsetHeight * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -55,7 +55,6 @@ export default function HelixCanvas() {
       const tiltX = (mouseX - 0.5) * 1.8;
       const tiltY = (mouseY - 0.5) * 1.2;
 
-      // Generate strand points
       const getStrand = (phaseOffset: number) => {
         const pts = [];
         for (let i = 0; i < POINTS; i++) {
@@ -64,7 +63,6 @@ export default function HelixCanvas() {
           const yPos = cy - totalH / 2 + t * totalH;
           const cosA = Math.cos(angle);
           const sinA = Math.sin(angle);
-          // Breathing radius — pulses gently
           const breathe = 1 + Math.sin(time * 0.5 + t * 3) * 0.06;
           const r = radius * breathe;
           const x = cx + cosA * r + tiltX * (t - 0.5) * r * 0.5;
@@ -78,78 +76,62 @@ export default function HelixCanvas() {
       const s1 = getStrand(0);
       const s2 = getStrand(Math.PI);
 
-      // Draw rungs first (behind strands)
+      // Batch rungs into single path
+      ctx.beginPath();
       for (let i = 0; i < POINTS; i += RUNG_SKIP) {
         const a = s1[i], b = s2[i];
-        const avgZ = (a.z + b.z) / 2;
-        const depth = (avgZ + 1) / 2;
-        const alpha = 0.02 + depth * 0.06;
-
-        ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = `rgba(124, 58, 237, ${alpha})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
       }
+      ctx.strokeStyle = "rgba(124, 58, 237, 0.04)";
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
 
-      // Draw each strand as smooth curve with depth
-      const drawStrand = (pts: typeof s1, r: number, g: number, b: number) => {
-        // Back pass (behind)
+      // Batch strand segments by depth bucket
+      const drawStrandBatched = (pts: typeof s1, r: number, g: number, b: number) => {
+        // Back pass
+        ctx.beginPath();
         for (let i = 1; i < pts.length; i++) {
           const p = pts[i - 1], c = pts[i];
           const depth = (c.z + 1) / 2;
           if (depth > 0.5) continue;
-          const alpha = 0.05 + depth * 0.15;
-          const lw = 0.3 + depth * 0.8;
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y); ctx.lineTo(c.x, c.y);
-          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-          ctx.lineWidth = lw;
-          ctx.stroke();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(c.x, c.y);
         }
-        // Front pass (in front)
+        ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.1)`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+
+        // Front pass
+        ctx.beginPath();
         for (let i = 1; i < pts.length; i++) {
           const p = pts[i - 1], c = pts[i];
           const depth = (c.z + 1) / 2;
           if (depth <= 0.5) continue;
-          const alpha = 0.08 + depth * 0.3;
-          const lw = 0.5 + depth * 1.5;
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y); ctx.lineTo(c.x, c.y);
-          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-          ctx.lineWidth = lw;
-          ctx.stroke();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(c.x, c.y);
         }
+        ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.25)`;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
       };
 
-      drawStrand(s1, 124, 58, 237);
-      drawStrand(s2, 236, 72, 153);
+      drawStrandBatched(s1, 124, 58, 237);
+      drawStrandBatched(s2, 236, 72, 153);
 
-      // Glow nodes at rung intersections
-      const allPts = [
-        ...s1.filter((_, i) => i % RUNG_SKIP === 0).map(p => ({ ...p, strand: 1 })),
-        ...s2.filter((_, i) => i % RUNG_SKIP === 0).map(p => ({ ...p, strand: 2 })),
-      ].sort((a, b) => a.z - b.z);
-
-      for (const p of allPts) {
-        const depth = (p.z + 1) / 2;
-        if (depth < 0.4) continue;
-        const r = 0.8 + depth * 2;
-        const alpha = (depth - 0.4) * 0.5;
-        const [cr, cg, cb] = p.strand === 1 ? [124, 58, 237] : [236, 72, 153];
-
-        // Soft glow
-        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 4);
-        grad.addColorStop(0, `rgba(${cr}, ${cg}, ${cb}, ${alpha * 0.4})`);
-        grad.addColorStop(1, `rgba(${cr}, ${cg}, ${cb}, 0)`);
-        ctx.fillStyle = grad;
-        ctx.fillRect(p.x - r * 4, p.y - r * 4, r * 8, r * 8);
-
-        // Core dot
+      // Glow nodes — batch into single fill
+      for (const pts of [s1, s2]) {
+        const [cr, cg, cb] = pts === s1 ? [124, 58, 237] : [236, 72, 153];
         ctx.beginPath();
-        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${cr}, ${cg}, ${cb}, ${alpha})`;
+        for (let i = 0; i < POINTS; i += RUNG_SKIP) {
+          const p = pts[i];
+          const depth = (p.z + 1) / 2;
+          if (depth < 0.4) continue;
+          const r = 0.8 + depth * 2;
+          ctx.moveTo(p.x + r, p.y);
+          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        }
+        ctx.fillStyle = `rgba(${cr}, ${cg}, ${cb}, 0.2)`;
         ctx.fill();
       }
 
@@ -161,7 +143,7 @@ export default function HelixCanvas() {
 
     window.addEventListener("resize", resize);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("mousemove", onMouse);
+    window.addEventListener("mousemove", onMouse, { passive: true });
 
     return () => {
       cancelAnimationFrame(animId);

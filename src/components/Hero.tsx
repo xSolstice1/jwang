@@ -484,7 +484,7 @@ function HeroParticles() {
     if (!ctx) return;
 
     const isTouch = window.matchMedia("(pointer: coarse)").matches;
-    const COUNT = isTouch ? 30 : 60;
+    const COUNT = isTouch ? 20 : 35;
     let animId: number;
 
     interface Particle {
@@ -495,7 +495,7 @@ function HeroParticles() {
     const particles: Particle[] = [];
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio, 2);
+      const dpr = Math.min(window.devicePixelRatio, 1.5);
       canvas.width = canvas.offsetWidth * dpr;
       canvas.height = canvas.offsetHeight * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -522,25 +522,24 @@ function HeroParticles() {
       const h = canvas.offsetHeight;
       ctx.clearRect(0, 0, w, h);
 
-      for (const p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = w;
-        if (p.x > w) p.x = 0;
-        if (p.y < 0) p.y = h;
-        if (p.y > h) p.y = 0;
-
-        const [r, g, b] = p.hue === 0 ? [124, 58, 237] : [236, 72, 153];
-
-        const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
-        glow.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${p.alpha * 0.3})`);
-        glow.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
-        ctx.fillStyle = glow;
-        ctx.fillRect(p.x - p.r * 4, p.y - p.r * 4, p.r * 8, p.r * 8);
+      // Batch by color — two passes, no per-particle gradient
+      for (let hue = 0; hue < 2; hue++) {
+        const [r, g, b] = hue === 0 ? [124, 58, 237] : [236, 72, 153];
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${p.alpha})`;
+        for (const p of particles) {
+          if (p.hue !== hue) continue;
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0) p.x = w;
+          if (p.x > w) p.x = 0;
+          if (p.y < 0) p.y = h;
+          if (p.y > h) p.y = 0;
+
+          ctx.moveTo(p.x + p.r, p.y);
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        }
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.45)`;
         ctx.fill();
       }
 
