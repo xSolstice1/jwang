@@ -20,7 +20,7 @@ export default function HelixCanvas() {
     let targetMouseY = 0.5;
     let time = 0;
 
-    const POINTS = 80;
+    const POINTS = 50;
     const ROTATION_SPEED = 0.0015;
     const SCROLL_FACTOR = 0.003;
     const RUNG_SKIP = 6;

@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState, useCallback } from "react";
 import GlitchText from "./GlitchText";
+import { useSound } from "./SoundEngine";
 import dynamic from "next/dynamic";
 
 const HelixCanvas = dynamic(() => import("./HelixCanvas"), { ssr: false });
@@ -73,7 +74,7 @@ function HeroParticles() {
     if (!ctx) return;
 
     const isTouch = window.matchMedia("(pointer: coarse)").matches;
-    const COUNT = isTouch ? 20 : 35;
+    const COUNT = isTouch ? 12 : 22;
     let animId: number;
 
     interface Particle {
@@ -155,6 +156,7 @@ function HeroParticles() {
 }
 
 export default function Hero() {
+  const sound = useSound();
   const [roleIndex, setRoleIndex] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -274,7 +276,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.5, ease }}
-              className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.9] mb-2"
+              className="font-pixel text-[18px] sm:text-[28px] md:text-[38px] lg:text-[48px] tracking-tight leading-[1.2] mb-2"
             >
               <span className="text-white">Ang </span>
               <GlitchText text="Jin Wei" className="gradient-shimmer" autoGlitch />
@@ -300,7 +302,7 @@ export default function Hero() {
               className="h-8 sm:h-10 flex items-start justify-center lg:justify-start mb-5 sm:mb-8"
             >
               <span
-                className="font-mono text-base sm:text-xl md:text-2xl"
+                className="font-pixel text-[9px] sm:text-[11px] md:text-[13px]"
                 style={{ color: "var(--text-secondary)" }}
               >
                 {displayed}
@@ -328,6 +330,7 @@ export default function Hero() {
                 href="#projects"
                 className="group relative px-8 sm:px-10 py-3.5 sm:py-4 font-pixel text-[7px] sm:text-[8px] tracking-wide uppercase overflow-hidden text-center"
                 style={{ color: "var(--bg)", background: "var(--accent)" }}
+                onMouseEnter={() => { sound.hover(); }}
               >
                 <span className="relative z-10">View Projects</span>
                 <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
@@ -340,6 +343,7 @@ export default function Hero() {
                   borderColor: "var(--border-color)",
                 }}
                 onMouseEnter={(e) => {
+                  sound.hover();
                   e.currentTarget.style.borderColor = "var(--gold)";
                   e.currentTarget.style.color = "var(--gold)";
                 }}

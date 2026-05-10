@@ -5,6 +5,7 @@ import { createContext, useContext, useCallback, useRef, useEffect, useState } f
 interface SoundEngine {
   hover: () => void;
   click: () => void;
+  navigate: () => void;
   achievement: () => void;
   whoosh: () => void;
   levelUp: () => void;
@@ -17,7 +18,7 @@ const SoundContext = createContext<SoundEngine | null>(null);
 
 export function useSound(): SoundEngine {
   const ctx = useContext(SoundContext);
-  if (!ctx) return { hover() {}, click() {}, achievement() {}, whoosh() {}, levelUp() {}, glitch() {}, enabled: false, toggle() {} };
+  if (!ctx) return { hover() {}, click() {}, navigate() {}, achievement() {}, whoosh() {}, levelUp() {}, glitch() {}, enabled: false, toggle() {} };
   return ctx;
 }
 
@@ -89,6 +90,31 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + 0.06);
+    } catch {}
+  }, [enabled, getCtx]);
+
+  const navigate = useCallback(() => {
+    if (!enabled) return;
+    try {
+      const ctx = getCtx();
+      const osc = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "sine";
+      osc2.type = "triangle";
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
+      osc2.frequency.setValueAtTime(660, ctx.currentTime + 0.05);
+      osc2.frequency.exponentialRampToValueAtTime(1100, ctx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.03, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      osc.start(ctx.currentTime);
+      osc2.start(ctx.currentTime + 0.05);
+      osc.stop(ctx.currentTime + 0.12);
+      osc2.stop(ctx.currentTime + 0.15);
     } catch {}
   }, [enabled, getCtx]);
 
@@ -186,7 +212,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
   const toggle = useCallback(() => setEnabled(v => !v), []);
 
   return (
-    <SoundContext value={{ hover, click, achievement, whoosh, levelUp, glitch, enabled, toggle }}>
+    <SoundContext value={{ hover, click, navigate, achievement, whoosh, levelUp, glitch, enabled, toggle }}>
       {children}
     </SoundContext>
   );

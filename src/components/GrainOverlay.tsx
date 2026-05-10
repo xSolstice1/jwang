@@ -14,8 +14,8 @@ export default function GrainOverlay() {
         <filter id="grain">
           <feTurbulence
             type="fractalNoise"
-            baseFrequency="0.65"
-            numOctaves="3"
+            baseFrequency="0.7"
+            numOctaves="2"
             stitchTiles="stitch"
           />
         </filter>

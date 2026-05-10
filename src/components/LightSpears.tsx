@@ -33,7 +33,7 @@ export default function LightSpears() {
     if (!ctx) return;
 
     const isTouch = window.matchMedia("(pointer: coarse)").matches;
-    const MAX_SPEARS = isTouch ? 25 : 40;
+    const MAX_SPEARS = isTouch ? 15 : 24;
 
     let animId: number;
     let mouseX = window.innerWidth / 2;
@@ -184,7 +184,7 @@ export default function LightSpears() {
         }
       }
 
-      const ambientRate = isTouch ? 0.03 : 0.06;
+      const ambientRate = isTouch ? 0.02 : 0.035;
       if (Math.random() < ambientRate) {
         if (!isTouch || !touching) {
           spawnAmbient();

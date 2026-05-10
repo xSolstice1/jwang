@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSound } from "./SoundEngine";
 
 const navItems = [
   { label: "About", href: "#about" },
@@ -24,6 +25,19 @@ export default function Navbar({ terminalOpen, onToggleTerminal, crtMode, onTogg
   const [activeSection, setActiveSection] = useState("");
   const indicatorRef = useRef<HTMLDivElement>(null);
   const navLinksRef = useRef<Map<string, HTMLAnchorElement>>(new Map());
+  const sound = useSound();
+
+  const smoothScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const target = document.querySelector(href);
+    if (!target) return;
+    const lenis = (window as unknown as Record<string, unknown>).__lenis as { scrollTo?: (target: Element, opts?: Record<string, unknown>) => void } | undefined;
+    if (lenis?.scrollTo) {
+      lenis.scrollTo(target, { offset: -80, duration: 1.2 });
+    } else {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -85,6 +99,7 @@ export default function Navbar({ terminalOpen, onToggleTerminal, crtMode, onTogg
           <a
             href="#"
             data-logo
+            onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
             className="font-pixel text-[8px] tracking-wider transition-colors duration-300"
             style={{ color: "var(--gold)" }}
           >
@@ -104,14 +119,16 @@ export default function Navbar({ terminalOpen, onToggleTerminal, crtMode, onTogg
                 <a
                   key={item.href}
                   href={item.href}
+                  onClick={(e) => { sound.navigate(); smoothScrollTo(e, item.href); }}
                   ref={(el) => {
                     if (el) navLinksRef.current.set(sectionId, el);
                   }}
                   className="px-4 py-2 font-pixel text-[7px] uppercase tracking-widest transition-colors duration-300"
                   style={{ color: isActive ? "var(--gold)" : "var(--text-muted)" }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = "var(--text-primary)")
-                  }
+                  onMouseEnter={(e) => {
+                    sound.hover();
+                    e.currentTarget.style.color = "var(--text-primary)";
+                  }}
                   onMouseLeave={(e) =>
                     (e.currentTarget.style.color = isActive ? "var(--gold)" : "var(--text-muted)")
                   }
@@ -184,7 +201,7 @@ export default function Navbar({ terminalOpen, onToggleTerminal, crtMode, onTogg
                   <a
                     key={item.href}
                     href={item.href}
-                    onClick={() => setMobileOpen(false)}
+                    onClick={(e) => { smoothScrollTo(e, item.href); setMobileOpen(false); }}
                     className="block py-3 font-pixel text-[7px] uppercase tracking-widest transition-colors duration-300"
                     style={{ color: isActive ? "var(--gold)" : "var(--text-secondary)" }}
                   >

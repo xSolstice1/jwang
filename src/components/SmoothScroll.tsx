@@ -2,11 +2,10 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Lenis from "lenis";
-import { motion, useScroll, useSpring, useTransform, useMotionValue } from "framer-motion";
+import { motion, useScroll, useSpring } from "framer-motion";
 
 export default function SmoothScroll({ children }: { children: ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
-  const velocity = useMotionValue(0);
   const [isTouch, setIsTouch] = useState(false);
 
   useEffect(() => {
@@ -15,21 +14,24 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
     if (touch) return;
 
     const lenis = new Lenis({
-      lerp: 0.12,
+      lerp: 0.1,
       smoothWheel: true,
       wheelMultiplier: 0.8,
     });
     lenisRef.current = lenis;
+    (window as unknown as Record<string, unknown>).__lenis = lenis;
 
     const raf = (time: number) => {
       lenis.raf(time);
-      velocity.set(lenis.velocity);
       requestAnimationFrame(raf);
     };
     requestAnimationFrame(raf);
 
-    return () => lenis.destroy();
-  }, [velocity]);
+    return () => {
+      delete (window as unknown as Record<string, unknown>).__lenis;
+      lenis.destroy();
+    };
+  }, []);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -37,11 +39,6 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
     damping: 30,
     restDelta: 0.001,
   });
-
-  const skewY = useSpring(
-    useTransform(velocity, [-5, 0, 5], [-1.2, 0, 1.2]),
-    { stiffness: 200, damping: 25 }
-  );
 
   return (
     <>
@@ -54,9 +51,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
         }}
       />
 
-      <motion.div style={isTouch ? undefined : { skewY }}>
-        {children}
-      </motion.div>
+      {children}
     </>
   );
 }
