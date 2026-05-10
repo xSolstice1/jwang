@@ -7,13 +7,16 @@ import { useXP } from "./XPEngine";
 import { useSound } from "./SoundEngine";
 
 interface TerminalLine {
-  type: "input" | "output" | "error" | "success" | "puzzle";
+  type: "input" | "output" | "error" | "success" | "puzzle" | "box";
   content: string;
+  boxTitle?: string;
+  boxLines?: string[];
 }
 
 const PUZZLE_CHAINS: {
   id: string;
-  hint: string[];
+  title: string;
+  hintLines: string[];
   answers: string[];
   reward: string[];
   xpLabel: string;
@@ -22,14 +25,12 @@ const PUZZLE_CHAINS: {
 }[] = [
   {
     id: "puzzle-1",
-    hint: [
-      "┌─── PUZZLE 1: Two Sum ─────────────┐",
-      "│                                    │",
-      "│  nums = [3, 8, 12, 5], target = 17 │",
-      "│                                    │",
-      "│  What two numbers add to target?   │",
-      "│  Format: a,b (sorted ascending)    │",
-      "└────────────────────────────────────┘",
+    title: "PUZZLE 1: Two Sum",
+    hintLines: [
+      "nums = [3, 8, 12, 5], target = 17",
+      "",
+      "What two numbers add to target?",
+      "Format: a,b (sorted ascending)",
     ],
     answers: ["5,12"],
     reward: [
@@ -43,15 +44,13 @@ const PUZZLE_CHAINS: {
   },
   {
     id: "puzzle-2",
-    hint: [
-      "┌─── PUZZLE 2: Stack ───────────────┐",
-      "│                                    │",
-      "│  push(3), push(7), pop(),          │",
-      "│  push(1), push(9), pop(), peek()   │",
-      "│                                    │",
-      "│  What does peek() return?          │",
-      "│  (just the number)                 │",
-      "└────────────────────────────────────┘",
+    title: "PUZZLE 2: Stack",
+    hintLines: [
+      "push(3), push(7), pop(),",
+      "push(1), push(9), pop(), peek()",
+      "",
+      "What does peek() return?",
+      "(just the number)",
     ],
     answers: ["1"],
     reward: [
@@ -65,21 +64,19 @@ const PUZZLE_CHAINS: {
   },
   {
     id: "puzzle-3",
-    hint: [
-      "┌─── PUZZLE 3: Big O ───────────────┐",
-      "│                                    │",
-      "│  def search(arr, target):          │",
-      "│      lo, hi = 0, len(arr)-1       │",
-      "│      while lo <= hi:              │",
-      "│          mid = (lo+hi)//2         │",
-      "│          if arr[mid] == target:   │",
-      "│              return mid           │",
-      "│          elif arr[mid] < target:  │",
-      "│              lo = mid + 1         │",
-      "│          else: hi = mid - 1      │",
-      "│                                    │",
-      "│  Time complexity? (e.g. n, n^2)    │",
-      "└────────────────────────────────────┘",
+    title: "PUZZLE 3: Big O",
+    hintLines: [
+      "def search(arr, target):",
+      "    lo, hi = 0, len(arr)-1",
+      "    while lo <= hi:",
+      "        mid = (lo+hi)//2",
+      "        if arr[mid] == target:",
+      "            return mid",
+      "        elif arr[mid] < target:",
+      "            lo = mid + 1",
+      "        else: hi = mid - 1",
+      "",
+      "Time complexity? (e.g. n, n^2)",
     ],
     answers: ["logn", "log n", "o(logn)", "o(log n)", "nlogn", "o(nlogn)"],
     reward: [
@@ -93,15 +90,13 @@ const PUZZLE_CHAINS: {
   },
   {
     id: "puzzle-4",
-    hint: [
-      "┌─── PUZZLE 4: Linked List ─────────┐",
-      "│                                    │",
-      "│  1 → 2 → 3 → 4 → 5 → NULL        │",
-      "│                                    │",
-      "│  After reversing, what does the    │",
-      "│  head node's value become?         │",
-      "│  (just the number)                 │",
-      "└────────────────────────────────────┘",
+    title: "PUZZLE 4: Linked List",
+    hintLines: [
+      "1 -> 2 -> 3 -> 4 -> 5 -> NULL",
+      "",
+      "After reversing, what does the",
+      "head node's value become?",
+      "(just the number)",
     ],
     answers: ["5"],
     reward: [
@@ -114,16 +109,14 @@ const PUZZLE_CHAINS: {
   },
   {
     id: "puzzle-5",
-    hint: [
-      "┌─── PUZZLE 5: Recursion ───────────┐",
-      "│                                    │",
-      "│  def f(n):                         │",
-      "│      if n <= 1: return n           │",
-      "│      return f(n-1) + f(n-2)        │",
-      "│                                    │",
-      "│  What is f(7)?                     │",
-      "│  (just the number)                 │",
-      "└────────────────────────────────────┘",
+    title: "PUZZLE 5: Recursion",
+    hintLines: [
+      "def f(n):",
+      "    if n <= 1: return n",
+      "    return f(n-1) + f(n-2)",
+      "",
+      "What is f(7)?",
+      "(just the number)",
     ],
     answers: ["13"],
     reward: [
@@ -205,7 +198,7 @@ export default function Terminal({ onClose }: { onClose: () => void }) {
           ...puzzle.reward.map(r => ({ type: "success" as const, content: r })),
           { type: "output", content: `  +${puzzle.xp} XP` },
           { type: "output", content: "" },
-          ...(hasNext ? [{ type: "output" as const, content: "Type 'next' for next puzzle, or 'quit' to exit." }] : []),
+          ...(hasNext ? [{ type: "output" as const, content: "Type 'next' for next puzzle." }] : []),
         ]);
         setActivePuzzle(null);
 
@@ -218,67 +211,67 @@ export default function Terminal({ onClose }: { onClose: () => void }) {
           ]);
         }
         return;
-      } else if (trimmed === "skip" || trimmed === "quit") {
+      } else if (trimmed === "next") {
+        const nextIdx = (activePuzzle + 1) % PUZZLE_CHAINS.length;
+        setActivePuzzle(nextIdx);
+        const next = PUZZLE_CHAINS[nextIdx];
+        addLines([
+          inputLine,
+          { type: "box", content: "", boxTitle: next.title, boxLines: next.hintLines },
+          { type: "output", content: "" },
+          { type: "output", content: `[${nextIdx + 1}/${PUZZLE_CHAINS.length}] Type answer, 'next'/'prev' to browse, 'quit' to exit.` },
+        ]);
+        return;
+      } else if (trimmed === "prev") {
+        const prevIdx = (activePuzzle - 1 + PUZZLE_CHAINS.length) % PUZZLE_CHAINS.length;
+        setActivePuzzle(prevIdx);
+        const prev = PUZZLE_CHAINS[prevIdx];
+        addLines([
+          inputLine,
+          { type: "box", content: "", boxTitle: prev.title, boxLines: prev.hintLines },
+          { type: "output", content: "" },
+          { type: "output", content: `[${prevIdx + 1}/${PUZZLE_CHAINS.length}] Type answer, 'next'/'prev' to browse, 'quit' to exit.` },
+        ]);
+        return;
+      } else if (trimmed === "quit") {
         setActivePuzzle(null);
         addLines([
           inputLine,
-          { type: "output", content: "Puzzle skipped. Type 'puzzle' to try again." },
+          { type: "output", content: "Exited puzzle mode. Type 'puzzle' to come back." },
         ]);
         return;
       } else {
         sound.click();
         addLines([
           inputLine,
-          { type: "error", content: "Incorrect. Try again, or type 'skip' to quit." },
+          { type: "error", content: "Incorrect. Try again, 'next'/'prev' to browse, 'quit' to exit." },
         ]);
         return;
       }
     }
 
-    // Secret commands
-    if (trimmed === "next") {
-      const nextUnsolved = PUZZLE_CHAINS.findIndex(p => !solvedPuzzles.has(p.id));
-      if (nextUnsolved === -1) {
-        addLines([inputLine, { type: "success", content: "All puzzles solved!" }]);
-      } else {
-        setActivePuzzle(nextUnsolved);
-        addLines([
-          inputLine,
-          ...PUZZLE_CHAINS[nextUnsolved].hint.map(h => ({ type: "puzzle" as const, content: h })),
-          { type: "output", content: "" },
-          { type: "output", content: "Type your answer, or 'skip' to quit." },
-        ]);
-      }
-      return;
-    }
 
     if (trimmed === "secrets") {
-      const unlockedList = [...unlockedCommands].map(c => `  ✓ ${c}`);
+      const unlockedList = [...unlockedCommands].map(c => `✓ ${c}`);
       const lockedCount = PUZZLE_CHAINS.filter(p => p.unlocks && !unlockedCommands.has(p.unlocks)).length;
-      const secretLines: TerminalLine[] = [
-        inputLine,
-        { type: "output", content: "┌─── SECRET MENU ─────────────────────┐" },
-        { type: "output", content: "│                                     │" },
-        { type: "output", content: "│  puzzle    — Coding puzzles for XP  │" },
-        { type: "output", content: "│  next      — Next puzzle            │" },
-        { type: "output", content: "│  xp        — Your stats             │" },
-        { type: "output", content: "│  rm -rf /  — Try it. I dare you.    │" },
-        { type: "output", content: "│  hack      — ???                    │" },
+      const boxContent = [
+        "puzzle    - Coding puzzles for XP",
+        "next      - Next puzzle",
+        "xp        - Your stats",
+        "rm -rf /  - Try it. I dare you.",
+        "hack      - ???",
       ];
       if (unlockedList.length > 0) {
-        secretLines.push({ type: "output", content: "│                                     │" });
-        secretLines.push({ type: "success", content: "│  UNLOCKED:                          │" });
-        unlockedList.forEach(c => {
-          secretLines.push({ type: "success", content: `│    ✓ ${c.padEnd(32)}│` });
-        });
+        boxContent.push("", "UNLOCKED:");
+        unlockedList.forEach(c => boxContent.push(`  ${c}`));
       }
       if (lockedCount > 0) {
-        const msg = `${lockedCount} more locked. Solve puzzles!`;
-        secretLines.push({ type: "output", content: `│  ${msg.padEnd(36)}│` });
+        boxContent.push(`${lockedCount} more locked. Solve puzzles!`);
       }
-      secretLines.push({ type: "output", content: "│                                     │" });
-      secretLines.push({ type: "output", content: "└─────────────────────────────────────┘" });
-      addLines(secretLines);
+      addLines([
+        inputLine,
+        { type: "box", content: "", boxTitle: "SECRET MENU", boxLines: boxContent },
+      ]);
       if (!cmdsRun.current.has("secrets")) {
         cmdsRun.current.add("secrets");
         addMilestone("cmd-secrets", "Found: Secret Menu", 15);
@@ -295,11 +288,12 @@ export default function Terminal({ onClose }: { onClose: () => void }) {
         ]);
       } else {
         setActivePuzzle(nextUnsolved);
+        const puzzle = PUZZLE_CHAINS[nextUnsolved];
         addLines([
           inputLine,
-          ...PUZZLE_CHAINS[nextUnsolved].hint.map(h => ({ type: "puzzle" as const, content: h })),
+          { type: "box", content: "", boxTitle: puzzle.title, boxLines: puzzle.hintLines },
           { type: "output", content: "" },
-          { type: "output", content: "Type your answer, or 'skip' to quit." },
+          { type: "output", content: "Type answer, 'next'/'prev' to browse, 'quit' to exit." },
         ]);
       }
       return;
@@ -420,10 +414,18 @@ export default function Terminal({ onClose }: { onClose: () => void }) {
     // Standard commands from portfolio.ts
     const output = terminalCommands[trimmed];
     if (output) {
-      addLines([
-        inputLine,
-        ...output.map(line => ({ type: "output" as const, content: line })),
-      ]);
+      const boxCommands: Record<string, string> = { about: "About", neofetch: "System Info" };
+      if (boxCommands[trimmed]) {
+        addLines([
+          inputLine,
+          { type: "box", content: "", boxTitle: boxCommands[trimmed], boxLines: output },
+        ]);
+      } else {
+        addLines([
+          inputLine,
+          ...output.map(line => ({ type: "output" as const, content: line })),
+        ]);
+      }
       if (!cmdsRun.current.has(trimmed)) {
         cmdsRun.current.add(trimmed);
         addMilestone(`cmd-${trimmed}`, `Ran: ${trimmed}`, 5);
@@ -533,29 +535,59 @@ export default function Terminal({ onClose }: { onClose: () => void }) {
         onClick={() => inputRef.current?.focus()}
       >
         <AnimatePresence>
-          {lines.map((line, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -5 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.1 }}
-              style={{
-                color:
-                  line.type === "input"
-                    ? "var(--accent)"
-                    : line.type === "error"
-                    ? "#f07178"
-                    : line.type === "success"
-                    ? "#a78bfa"
-                    : line.type === "puzzle"
-                    ? "var(--purple)"
-                    : "var(--text-secondary)",
-              }}
-              className={line.content === "" ? "h-4" : ""}
-            >
-              {line.content}
-            </motion.div>
-          ))}
+          {lines.map((line, i) => {
+            if (line.type === "box" && line.boxTitle && line.boxLines) {
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -5 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.1 }}
+                  className="mt-2 mb-6 rounded border px-4 py-3"
+                  style={{
+                    borderColor: "var(--purple)",
+                    background: "rgba(168, 139, 250, 0.05)",
+                  }}
+                >
+                  <div className="text-xs font-bold mb-2 tracking-wider" style={{ color: "var(--purple)" }}>
+                    {line.boxTitle}
+                  </div>
+                  {line.boxLines.map((bl, j) => (
+                    <div
+                      key={j}
+                      className={bl === "" ? "h-3" : ""}
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      {bl}
+                    </div>
+                  ))}
+                </motion.div>
+              );
+            }
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.1 }}
+                style={{
+                  color:
+                    line.type === "input"
+                      ? "var(--accent)"
+                      : line.type === "error"
+                      ? "#f07178"
+                      : line.type === "success"
+                      ? "#a78bfa"
+                      : line.type === "puzzle"
+                      ? "var(--purple)"
+                      : "var(--text-secondary)",
+                }}
+                className={line.content === "" ? "h-4" : ""}
+              >
+                {line.content}
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
 
         <form onSubmit={handleSubmit} className="flex items-center mt-1">
